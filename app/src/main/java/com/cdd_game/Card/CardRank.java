@@ -1,7 +1,7 @@
 package com.cdd_game.Card;
 
 /**
- * 点数：从小到大排序。
+ * 点数：从小到大排序。TODO: 重构getEnumByWeight()函数，通过哈希表实现
  */
 public enum CardRank {
     Card_3(1,"3"),
@@ -39,4 +39,19 @@ public enum CardRank {
         return name;
     }
 
+    public static CardRank getEnumByWeight (int weight){
+        for (CardRank rank : CardRank.values()) {
+            if (rank.weight == weight)
+                return rank;
+        }
+        return null;
+    }
+
+    public static int getMinWeight() {
+        return Card_3.weight;
+    }
+
+    public static int getMaxWeight() {
+        return Card_Joker.weight;
+    }
 }
