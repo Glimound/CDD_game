@@ -27,7 +27,7 @@ public class CardPool {
 
     public void addCards(CardPool cardPool) {
         cards.addAll(cardPool.cards);
-        cardCounter++;
+        cardCounter+= cardPool.getCardCounter();
     }
 
     /**
@@ -153,5 +153,28 @@ public class CardPool {
      */
     public void shuffle() {
 
+    }
+
+    /**
+     * 判断牌型的函数
+     */
+    public boolean isSameRanks() {
+        CardRank cardRank=cards.get(0).getRank();
+        for(int i=1;i<cardCounter;i++){
+            if(!cards.get(i).getRank().equals(cardRank)){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean isSameSuits(){
+        CardSuit cardSuit=cards.get(0).getSuit();
+        for(int i=1;i<cardCounter;i++){
+            if(!cards.get(i).getSuit().equals(cardSuit)){
+                return false;
+            }
+        }
+        return true;
     }
 }
