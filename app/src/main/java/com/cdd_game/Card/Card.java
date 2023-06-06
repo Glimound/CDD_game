@@ -1,16 +1,6 @@
 package com.cdd_game.Card;
 
-public class Card {
-    /**
-     * DIAMOND：方片；CLUB：梅花；HEART：红桃；SPADE：黑桃。从小到大排序。
-     */
-    public static final int DIAMOND = 0, CLUB = 1, HEART = 2, SPADE = 3;
-
-    /**
-     * 点数：从小到大排序。
-     */
-    public static final int THREE = 0, FOUR = 1, FIVE = 2, SIX = 3, SEVEN = 4, EIGHT = 5, NINE = 6,
-            TEN = 7, J = 8, Q = 9, K = 10, A = 11, TWO = 12, BLACKJOKER = 13, REDJOKER = 14;
+public class Card implements Comparable<Card> {
 
     private final int id;
     private CardSuit suit;
@@ -30,7 +20,7 @@ public class Card {
         return rank;
     }
 
-    public void setRank(CardRank rank) {
+    private void setRank(CardRank rank) {
         this.rank = rank;
     }
 
@@ -38,7 +28,24 @@ public class Card {
         return suit;
     }
 
-    public void setSuit(CardSuit suit) {
+    private void setSuit(CardSuit suit) {
         this.suit = suit;
+    }
+
+    @Override
+    public int compareTo(Card card) {
+        if (getRank().getWeight() > card.getRank().getWeight()) {
+            return 1;
+        } else if (getRank().getWeight() < card.getRank().getWeight()) {
+            return -1;
+        } else {
+            if (getSuit().getWeight() > card.getSuit().getWeight()) {
+                return 1;
+            } else if (getSuit().getWeight() < card.getSuit().getWeight()) {
+                return -1;
+            } else {
+                return 0;
+            }
+        }
     }
 }

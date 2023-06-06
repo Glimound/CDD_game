@@ -8,24 +8,41 @@ public class CardFactoryTest {
 
     CardFactory factory = new CardFactory();
     @Test
-    public void createCard() {
-        Card card1 = factory.createCard(Card.CLUB, Card.K);
+    public void createCard() throws Exception {
+        Card card1 = factory.createCard(CardSuit.CLUB, CardRank.Card_K);
         assertNotNull(card1);
-        assertEquals(card1.getSuit(), Card.CLUB);
-        assertEquals(card1.getRank(), Card.K);
+        assertEquals(card1.getSuit(), CardSuit.CLUB);
+        assertEquals(card1.getRank(), CardRank.Card_K);
         assertEquals(card1.getId(), CardFactory.getCardId() - 1);
 
-        Card card2 = factory.createCard(Card.HEART, Card.BLACKJOKER);
+        Card card2 = factory.createCard(CardSuit.SPADE, CardRank.Card_2);
         assertNotNull(card2);
-        assertEquals(card2.getSuit(), Card.HEART);
-        assertEquals(card2.getRank(), Card.BLACKJOKER);
+        assertEquals(card2.getSuit(), CardSuit.SPADE);
+        assertEquals(card2.getRank(), CardRank.Card_2);
         assertEquals(card2.getId(), CardFactory.getCardId() - 1);
 
-        Card card3 = factory.createCard(Card.SPADE, Card.TWO);
+        Card card3 = factory.createCard(CardSuit.BLACK, CardRank.Card_Joker);
         assertNotNull(card3);
-        assertEquals(card3.getSuit(), Card.SPADE);
-        assertEquals(card3.getRank(), Card.TWO);
+        assertEquals(card3.getSuit(), CardSuit.BLACK);
+        assertEquals(card3.getRank(), CardRank.Card_Joker);
         assertEquals(card3.getId(), CardFactory.getCardId() - 1);
+
+
+        assertThrows(Exception.class,
+                () -> {
+                    factory.createCard(CardSuit.HEART, CardRank.Card_Joker);
+                });
+
+        assertThrows(Exception.class,
+                () -> {
+                    factory.createCard(CardSuit.RED, CardRank.Card_K);
+                });
+
+        assertThrows(Exception.class,
+                () -> {
+                    factory.createCard(CardSuit.BLACK, CardRank.Card_2);
+                });
+
     }
 
     @Test

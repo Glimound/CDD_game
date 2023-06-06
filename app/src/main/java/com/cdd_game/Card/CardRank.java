@@ -1,5 +1,8 @@
 package com.cdd_game.Card;
 
+/**
+ * 点数：从小到大排序。
+ */
 public enum CardRank {
     Card_3(1,"3"),
     Card_4(2,"4"),
