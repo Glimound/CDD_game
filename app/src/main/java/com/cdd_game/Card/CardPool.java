@@ -4,16 +4,20 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class CardPool {
-    private ArrayList<Card> cards;
+    protected ArrayList<Card> cards;
 
     /**
      * 当前牌池中卡牌的数量。
      */
-    private int cardCounter;
+    protected int cardCounter;
 
     CardPool() {
         cards = new ArrayList<>();
         cardCounter = 0;
+    }
+
+    public ArrayList<Card> getCards() {
+        return cards;
     }
 
     public int getCardCounter() {
@@ -177,4 +181,5 @@ public class CardPool {
         }
         return true;
     }
+
 }
