@@ -20,8 +20,8 @@ public class Rule {
                         cards.setCardGroupType("三牌");
                         break;
                 }
+                return true;
             }
-            return true;
         } else if (numOfcards==5) {
             HashMap<CardRank,Integer>groupOfcards=new HashMap<>();
             for(int i=0;i<cards.getCardCounter();i++){
@@ -40,7 +40,7 @@ public class Rule {
                     cards.setCardGroupType("四带一");
                     return true;
                 }
-                cards.setCardGroupType("未识别");
+                cards.setCardGroupType("识别错误");
                 return false;
 
             } else if (groupOfcards.size()==5) {
@@ -54,7 +54,7 @@ public class Rule {
                             cards.setCardGroupType("同花五");
                             return true;
                         }else{
-                            cards.setCardGroupType("未识别");
+                            cards.setCardGroupType("识别错误");
                             return false;
                         }
                     }
@@ -68,7 +68,7 @@ public class Rule {
                 return true;
             }
         }
-        cards.setCardGroupType("未识别");
+        cards.setCardGroupType("识别错误");
         return false;
     }
 }

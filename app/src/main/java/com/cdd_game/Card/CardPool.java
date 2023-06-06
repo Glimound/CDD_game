@@ -98,7 +98,7 @@ public class CardPool {
     /**
      * 将cardPool中包含的牌。若找到并成功移除这些卡则返回true；
      * 若卡池为空或不存在这些卡，则卡池不变并返回false。
-     * ！！！！待测试 部分有（交集情况）
+     * TODO:！！！！待测试 部分有（交集情况）
      * @param cardPool CardPool实例
      */
     public boolean removeCards(CardPool cardPool) {
