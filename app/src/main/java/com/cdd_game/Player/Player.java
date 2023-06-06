@@ -22,7 +22,7 @@ public class Player {
      * cards 代表玩家准备出的牌
      * @return
      */
-    boolean playCard(CardPool cards){
+    public boolean playCard(CardPool cards){
         //TODO：首先检查出的牌是否符合规则(待修改）
         if(Game.getGameInstance().getRule().check(cards)){
             //TODO：再检查出牌是否大于上家()
@@ -36,7 +36,7 @@ public class Player {
         return false;
     }
 
-    boolean pass(){
+    public boolean pass(){
         //TODO:
         return true;
     }
@@ -45,7 +45,7 @@ public class Player {
      * TODO:传入参数类型
      * @return
      */
-    boolean sortCard(int para){
+    public boolean sortCard(int para){
         this.ownCards.sort(para);
         return true;
     }
