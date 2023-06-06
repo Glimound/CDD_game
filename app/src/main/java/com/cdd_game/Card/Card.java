@@ -13,10 +13,10 @@ public class Card {
             TEN = 7, J = 8, Q = 9, K = 10, A = 11, TWO = 12, BLACKJOKER = 13, REDJOKER = 14;
 
     private final int id;
-    private int suit;
-    private int rank;
+    private CardSuit suit;
+    private CardRank rank;
 
-    Card(int id, int suit, int rank) {
+    Card(int id, CardSuit suit, CardRank rank) {
         this.id = id;
         this.suit = suit;
         this.rank = rank;
@@ -26,19 +26,19 @@ public class Card {
         return id;
     }
 
-    public int getRank() {
+    public CardRank getRank() {
         return rank;
     }
 
-    public void setRank(int rank) {
+    public void setRank(CardRank rank) {
         this.rank = rank;
     }
 
-    public int getSuit() {
+    public CardSuit getSuit() {
         return suit;
     }
 
-    public void setSuit(int suit) {
+    public void setSuit(CardSuit suit) {
         this.suit = suit;
     }
 }

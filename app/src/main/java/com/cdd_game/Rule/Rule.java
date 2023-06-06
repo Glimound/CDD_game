@@ -1,2 +1,5 @@
-package com.cdd_game.Rule;public class Rule {
+package com.cdd_game.Rule;
+
+public class Rule {
+
 }
