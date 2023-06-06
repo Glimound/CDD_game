@@ -4,16 +4,20 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class CardPool {
-    private ArrayList<Card> cards;
+    protected ArrayList<Card> cards;
 
     /**
      * 当前牌池中卡牌的数量。
      */
-    private int cardCounter;
+    protected int cardCounter;
 
     CardPool() {
         cards = new ArrayList<>();
         cardCounter = 0;
+    }
+
+    public ArrayList<Card> getCards() {
+        return cards;
     }
 
     public int getCardCounter() {
@@ -27,7 +31,7 @@ public class CardPool {
 
     public void addCards(CardPool cardPool) {
         cards.addAll(cardPool.cards);
-        cardCounter++;
+        cardCounter+= cardPool.getCardCounter();
     }
 
     /**
@@ -94,7 +98,7 @@ public class CardPool {
     /**
      * 将cardPool中包含的牌。若找到并成功移除这些卡则返回true；
      * 若卡池为空或不存在这些卡，则卡池不变并返回false。
-     * ！！！！待测试 部分有（交集情况）
+     * TODO:！！！！待测试 部分有（交集情况）
      * @param cardPool CardPool实例
      */
     public boolean removeCards(CardPool cardPool) {
@@ -154,4 +158,28 @@ public class CardPool {
     public void shuffle() {
 
     }
+
+    /**
+     * 判断牌型的函数
+     */
+    public boolean isSameRanks() {
+        CardRank cardRank=cards.get(0).getRank();
+        for(int i=1;i<cardCounter;i++){
+            if(!cards.get(i).getRank().equals(cardRank)){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean isSameSuits(){
+        CardSuit cardSuit=cards.get(0).getSuit();
+        for(int i=1;i<cardCounter;i++){
+            if(!cards.get(i).getSuit().equals(cardSuit)){
+                return false;
+            }
+        }
+        return true;
+    }
+
 }
