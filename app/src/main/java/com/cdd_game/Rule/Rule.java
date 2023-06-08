@@ -2,12 +2,11 @@ package com.cdd_game.Rule;
 import com.cdd_game.Card.*;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 
 public class Rule {
     public boolean validate(CardGroup cards){
-        int numOfcards=cards.getCardCounter();
+        int numOfcards=cards.size();
         
         if(numOfcards>0&&numOfcards<4){
             if(cards.isSameRanks()){
@@ -32,7 +31,7 @@ public class Rule {
             return true;
         } else if (numOfcards==5) {
             HashMap<CardRank,Integer>groupOfcards=new HashMap<>();
-            for(int i=0;i<cards.getCardCounter();i++){
+            for(int i = 0; i<cards.size(); i++){
                 Card temp=cards.getCards().get(i);
                 if(groupOfcards.containsKey(temp.getRank())){
                     int num= groupOfcards.get(temp.getRank());
@@ -87,7 +86,7 @@ public class Rule {
                 cards.sort();
 
                 Card temp=cards.getCards().get(0);
-                for(int i=1;i<cards.getCardCounter();i++){
+                for(int i = 1; i<cards.size(); i++){
                     if(cards.getCards().get(i).getRank().getWeight()  - temp.getRank().getWeight()!=1){
                         if(cards.isSameSuits())
                         {

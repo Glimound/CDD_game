@@ -1,7 +1,6 @@
 package com.cdd_game.Card;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 
 public class CardGroup extends CardPool{
@@ -17,7 +16,7 @@ public class CardGroup extends CardPool{
 
     CardGroup(){
         super();
-
+        this.cardGroupType = CardGroupType.UNKNOW;
     }
 
     CardGroup(CardGroupType cardGroupType){
@@ -60,7 +59,7 @@ public class CardGroup extends CardPool{
 
     public boolean compare(CardGroup cardGroup){
 
-        if(cardGroup.getCardCounter()!=this.getCardCounter()){
+        if(cardGroup.size()!=this.size()){
             return false;
         }
         if(this.cardGroupType.getWeight()>4&&cardGroup.cardGroupType.getWeight()>4){

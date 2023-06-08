@@ -1,5 +1,7 @@
 package com.cdd_game.Card;
 
+// TODO: 实现iterable接口
+
 /**
  * 点数：从小到大排序。TODO: 重构getEnumByWeight()函数，通过哈希表实现
  */

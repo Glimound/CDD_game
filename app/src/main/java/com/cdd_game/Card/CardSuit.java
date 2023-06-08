@@ -1,5 +1,7 @@
 package com.cdd_game.Card;
 
+// TODO: 实现iterable接口
+
 /**
  * DIAMOND：方片；
  * CLUB：梅花；
@@ -10,11 +12,34 @@ package com.cdd_game.Card;
  * RED：大王，仅供大小王使用。
  */
 public enum CardSuit {
+    /**
+     * 方片
+     */
     DIAMOND(1,"DIAMOND"),
+
+    /**
+     * 梅花
+     */
     CLUB(2,"CLUB"),
+
+    /**
+     * 红桃
+     */
     HEART(3,"HEART"),
+
+    /**
+     * 黑桃
+     */
     SPADE(4,"SPADE"),
+
+    /**
+     * 黑（小王）
+     */
     BLACK(5, "BLACK"),
+
+    /**
+     * 红(大王）
+     */
     RED(6, "RED");
 
     int weight;
