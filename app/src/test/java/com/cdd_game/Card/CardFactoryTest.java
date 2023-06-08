@@ -29,19 +29,13 @@ public class CardFactoryTest {
 
 
         assertThrows(Exception.class,
-                () -> {
-                    factory.createCard(CardSuit.HEART, CardRank.Card_Joker);
-                });
+                () -> factory.createCard(CardSuit.HEART, CardRank.Card_Joker));
 
         assertThrows(Exception.class,
-                () -> {
-                    factory.createCard(CardSuit.RED, CardRank.Card_K);
-                });
+                () -> factory.createCard(CardSuit.RED, CardRank.Card_K));
 
         assertThrows(Exception.class,
-                () -> {
-                    factory.createCard(CardSuit.BLACK, CardRank.Card_2);
-                });
+                () -> factory.createCard(CardSuit.BLACK, CardRank.Card_2));
 
     }
 

@@ -1,7 +1,6 @@
 package com.cdd_game.Card;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 
 public class CardGroup extends CardPool{
@@ -11,26 +10,25 @@ public class CardGroup extends CardPool{
      */
 
 
-    private String cardGroupType;
-
+    private CardGroupType cardGroupType;
 
     private Card maxCard;
 
     CardGroup(){
         super();
-
+        this.cardGroupType = CardGroupType.UNKNOW;
     }
 
-    CardGroup(String cardGroupType){
+    CardGroup(CardGroupType cardGroupType){
         super();
         this.cardGroupType=cardGroupType;
     }
 
-    public String getCardGroupType(){
+    public CardGroupType getCardGroupType(){
         return cardGroupType;
     }
 
-    public void setCardGroupType(String cardGroupType){
+    public void setCardGroupType(CardGroupType cardGroupType){
         this.cardGroupType=cardGroupType;
     }
 
@@ -45,6 +43,46 @@ public class CardGroup extends CardPool{
     @Override
     public ArrayList<Card> getCards() {
         return cards;
+    }
+
+
+    public ArrayList<Card> getCardsByRank(CardRank rank){
+        ArrayList<Card> retCards=new ArrayList<>();
+        if (cards.isEmpty())
+            return null;
+        for(Card card:cards){
+            if(card.getRank()==rank)
+                retCards.add(card);
+        }
+        return retCards;
+    }
+
+    public boolean compare(CardGroup cardGroup){
+
+        if(cardGroup.size()!=this.size()){
+            return false;
+        }
+        if(this.cardGroupType.getWeight()>4&&cardGroup.cardGroupType.getWeight()>4){
+            if(this.cardGroupType.getWeight()==cardGroup.cardGroupType.getWeight()){
+                if(this.maxCard.compareTo(cardGroup.getMaxCard())==1){
+                    return true;
+                }else{
+                    return false;
+                }
+            }else{
+                if(this.cardGroupType.getWeight()>cardGroup.cardGroupType.getWeight())
+                    return true;
+                else
+                    return false;
+            }
+        }
+        else{
+            if(this.maxCard.compareTo(cardGroup.getMaxCard())==1){
+                return true;
+            }else{
+                return false;
+            }
+        }
     }
 
 }

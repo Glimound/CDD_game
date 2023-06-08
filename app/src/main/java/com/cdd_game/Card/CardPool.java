@@ -20,18 +20,32 @@ public class CardPool {
         return cards;
     }
 
-    public int getCardCounter() {
+    public int size() {
         return cardCounter;
     }
 
+    /**
+     * 向卡池中添加一张卡。若卡池中已存在该卡，则卡池不变。
+     */
     public void addCard(Card card) {
-        cards.add(card);
-        cardCounter++;
+        if (!cards.contains(card)) {
+            cards.add(card);
+            cardCounter++;
+        }
     }
 
+    /**
+     * 将cardPool中的卡加入该卡池。若卡池中已存在的卡不会重复加入。
+     */
     public void addCards(CardPool cardPool) {
-        cards.addAll(cardPool.cards);
-        cardCounter+= cardPool.getCardCounter();
+        if (cardPool.isEmpty())
+            return;
+        for (Card card : cardPool.getCards()) {
+            if (!cards.contains(card)) {
+                cards.add(card);
+                cardCounter++;
+            }
+        }
     }
 
     /**
@@ -92,17 +106,27 @@ public class CardPool {
             return null;
         Card targetCard = cards.get(cards.indexOf(card));
         cards.remove(targetCard);
+        cardCounter--;
         return targetCard;
     }
 
     /**
-     * 将cardPool中包含的牌。若找到并成功移除这些卡则返回true；
-     * 若卡池为空或不存在这些卡，则卡池不变并返回false。
-     * TODO:！！！！待测试 部分有（交集情况）
+     * 移除卡池中包含在特定cardPool中的牌。若成功移除这些卡则返回true；
+     * 若卡池为空则返回false。
      * @param cardPool CardPool实例
      */
     public boolean removeCards(CardPool cardPool) {
-        return cards.removeAll(cardPool.cards);
+        if (cards.isEmpty())
+            return false;
+        if (cardPool.isEmpty())
+            return true;
+        for (Card card : cardPool.getCards()) {
+            if (cards.contains(card)) {
+                cards.remove(card);
+                cardCounter--;
+            }
+        }
+        return true;
     }
 
     /**
@@ -120,6 +144,10 @@ public class CardPool {
                 break;
             }
         }
+        if (targetCard != null) {
+            cards.remove(targetCard);
+            cardCounter--;
+        }
         return targetCard;
     }
 
@@ -131,6 +159,7 @@ public class CardPool {
             return null;
         Card card = cards.get(0);
         cards.remove(card);
+        cardCounter--;
         return card;
     }
 
@@ -142,6 +171,7 @@ public class CardPool {
             return null;
         Card card = cards.get(cardCounter - 1);
         cards.remove(card);
+        cardCounter--;
         return card;
     }
 
@@ -152,11 +182,8 @@ public class CardPool {
         Collections.sort(cards);
     }
 
-    /**
-     * TODO: 洗牌功能。
-     */
     public void shuffle() {
-
+        Collections.shuffle(cards);
     }
 
     /**
@@ -180,6 +207,10 @@ public class CardPool {
             }
         }
         return true;
+    }
+
+    public boolean isEmpty() {
+       return (size() == 0);
     }
 
 }
