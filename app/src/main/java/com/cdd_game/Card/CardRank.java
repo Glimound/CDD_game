@@ -4,6 +4,7 @@ package com.cdd_game.Card;
  * 点数：从小到大排序。TODO: 重构getEnumByWeight()函数，通过哈希表实现
  */
 public enum CardRank {
+    Card_2InS(0,"2"),
     Card_3(1,"3"),
     Card_4(2,"4"),
     Card_5(3,"5"),
