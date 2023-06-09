@@ -20,7 +20,7 @@ public class Card implements Comparable<Card> {
         return rank;
     }
 
-    private void setRank(CardRank rank) {
+    public void setRank(CardRank rank) {
         this.rank = rank;
     }
 
@@ -28,7 +28,7 @@ public class Card implements Comparable<Card> {
         return suit;
     }
 
-    private void setSuit(CardSuit suit) {
+    public void setSuit(CardSuit suit) {
         this.suit = suit;
     }
 

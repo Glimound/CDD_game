@@ -5,10 +5,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class NormalRule implements Rule {
-    @Override
     public boolean validate(CardGroup cards){
         int numOfcards=cards.size();
-        
+
         if(numOfcards>0&&numOfcards<4){
             if(cards.isSameRanks()){
                 switch(numOfcards) {
@@ -83,35 +82,81 @@ public class NormalRule implements Rule {
 
             } else if (groupOfcards.size()==5) {
 
-                ArrayList<Card> cardsOfTwo=cards.getCardsByRank(CardRank.Card_2);
-                cards.sort();
 
-                Card temp=cards.getCards().get(0);
-                for(int i = 1; i<cards.size(); i++){
-                    if(cards.getCards().get(i).getRank().getWeight()  - temp.getRank().getWeight()!=1){
-                        if(cards.isSameSuits())
-                        {
-                            cards.setCardGroupType(CardGroupType.SAMESUITS);//同花五
-                            cards.sort();
+                if(cards.containCardsRank(CardRank.Card_2)){
+                    if(cards.containCardsRank(CardRank.Card_A)){
+
+                        cards.sequenceSort(); //A2345....
+
+                        if(cards.getCards().get(4).getRank().equals(CardRank.Card_5)){
+                            if(cards.isSameSuits()){
+                                cards.setCardGroupType(CardGroupType.S_SEQUENCE);//同花顺
+                            }else{
+                                cards.setCardGroupType(CardGroupType.D_SEQUENCE);//杂顺
+                            }
                             cards.setMaxCard(cards.getCards().get(4));
                             return true;
                         }else{
-                            cards.setCardGroupType(CardGroupType.UNKNOWN);
-                            return false;
+                            if(cards.isSameSuits()){
+                                cards.setCardGroupType(CardGroupType.SAMESUITS);//同花五
+                                cards.setMaxCard(cards.getCards().get(4));
+                                return true;
+                            }else
+                                return false;
+                        }
+                    }else{
+                        cards.sequenceAMaxSort();//2....10JQKA
+
+                        if(cards.getCards().get(4).getRank().equals(CardRank.Card_6)){
+                            if(cards.isSameSuits()){
+                                cards.setCardGroupType(CardGroupType.S_SEQUENCE);//同花顺
+                            }else{
+                                cards.setCardGroupType(CardGroupType.D_SEQUENCE);//杂顺
+                            }
+                            cards.setMaxCard(cards.getCards().get(4));
+                            return true;
+                        }else{
+                            if(cards.isSameSuits()){
+                                cards.setCardGroupType(CardGroupType.SAMESUITS);//同花五
+                                cards.setMaxCard(cards.getCards().get(4));
+                                return true;
+                            }else
+                                return false;
                         }
                     }
                 }
-                if(cards.isSameSuits()){
-                    cards.setCardGroupType(CardGroupType.S_SEQUENCE);//同花顺
-                    cards.sort();
-                    cards.setMaxCard(cards.getCards().get(4));
-                }
                 else{
                     cards.sort();
-                    cards.setMaxCard(cards.getCards().get(4));
-                    cards.setCardGroupType(CardGroupType.D_SEQUENCE);//杂顺
+                    Card temp=cards.getCards().get(0);
+                    for(int i = 1; i<cards.size(); i++){
+                        if(cards.getCards().get(i).getRank().getWeight()  - temp.getRank().getWeight()!=1){
+                            if(cards.isSameSuits())
+                            {
+                                cards.setCardGroupType(CardGroupType.SAMESUITS);//同花五
+                                cards.sort();
+                                cards.setMaxCard(cards.getCards().get(4));
+                                return true;
+                            }else{
+                                cards.setCardGroupType(CardGroupType.UNKNOWN);
+                                return false;
+                            }
+                        }
+                    }
+                    if(cards.isSameSuits()){
+                        cards.setCardGroupType(CardGroupType.S_SEQUENCE);//同花顺
+                        cards.sort();
+                        cards.setMaxCard(cards.getCards().get(4));
+                    }
+                    else{
+                        cards.sort();
+                        cards.setMaxCard(cards.getCards().get(4));
+                        cards.setCardGroupType(CardGroupType.D_SEQUENCE);//杂顺
+                    }
+                    return true;
                 }
-                return true;
+
+
+
             }
         }
         cards.setCardGroupType(CardGroupType.UNKNOWN);

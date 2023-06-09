@@ -56,6 +56,16 @@ public class CardGroup extends CardPool{
         return retCards;
     }
 
+    public boolean containCardsRank(CardRank rank){
+        if (cards.isEmpty())
+            return false;
+        for(Card card:cards){
+            if(card.getRank()==rank)
+                return true;
+        }
+        return false;
+    }
+
     public boolean compare(CardGroup cardGroup){
 
         if(cardGroup.size()!=this.size()){
