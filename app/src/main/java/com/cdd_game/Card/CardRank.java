@@ -1,12 +1,12 @@
 package com.cdd_game.Card;
 
 // TODO: 实现iterable接口
+// TODO: 重构getEnumByWeight()函数，通过哈希表实现
 
 /**
- * 点数：从小到大排序。TODO: 重构getEnumByWeight()函数，通过哈希表实现
+ * 点数：从小到大排序。
  */
 public enum CardRank {
-    Card_2InS(0,"2"),
     Card_3(1,"3"),
     Card_4(2,"4"),
     Card_5(3,"5"),

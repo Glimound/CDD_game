@@ -16,7 +16,7 @@ public class CardPool {
         cardCounter = 0;
     }
 
-    public ArrayList<Card> getCards() {
+    ArrayList<Card> getCards() {
         return cards;
     }
 
@@ -40,7 +40,7 @@ public class CardPool {
     public void addCards(CardPool cardPool) {
         if (cardPool.isEmpty())
             return;
-        for (Card card : cardPool.getCards()) {
+        for (Card card : cardPool.cards) {
             if (!cards.contains(card)) {
                 cards.add(card);
                 cardCounter++;
@@ -120,7 +120,7 @@ public class CardPool {
             return false;
         if (cardPool.isEmpty())
             return true;
-        for (Card card : cardPool.getCards()) {
+        for (Card card : cardPool.cards) {
             if (cards.contains(card)) {
                 cards.remove(card);
                 cardCounter--;
@@ -161,6 +161,18 @@ public class CardPool {
         cards.remove(card);
         cardCounter--;
         return card;
+    }
+
+    /**
+     * 删除并返回卡池中对应花色和点数的卡，若卡池中无牌或未找到则返回null。
+     */
+    public Card removeCardBySuitAndRank(CardSuit suit, CardRank rank) {
+        Card card = getCardBySuitAndRank(suit, rank);
+        if (card != null) {
+            return removeCard(card);
+        } else {
+            return null;
+        }
     }
 
     /**

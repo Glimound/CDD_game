@@ -46,12 +46,12 @@ public class CardPoolFactoryTest {
     @Test
     public void createCardGroup() throws Exception {
         CardPoolFactory factory = new CardPoolFactory();
-        CardGroup cards1 = factory.createCardGroup(CardGroupType.UNKNOW);
+        CardGroup cards1 = factory.createCardGroup(CardGroupType.UNKNOWN);
         assertEquals(cards1.size(), 0);
-        assertEquals(cards1.getCardGroupType(), CardGroupType.UNKNOW);
+        assertEquals(cards1.getCardGroupType(), CardGroupType.UNKNOWN);
 
-        CardGroup cards2 = factory.createCardGroup(CardGroupType.QUADRUPLELWITHSINGLE);
+        CardGroup cards2 = factory.createCardGroup(CardGroupType.QUADRUPLEWITHSINGLE);
         assertEquals(cards2.size(), 0);
-        assertEquals(cards2.getCardGroupType(), CardGroupType.QUADRUPLELWITHSINGLE);
+        assertEquals(cards2.getCardGroupType(), CardGroupType.QUADRUPLEWITHSINGLE);
     }
 }

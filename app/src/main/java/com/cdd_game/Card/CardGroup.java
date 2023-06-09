@@ -1,6 +1,7 @@
 package com.cdd_game.Card;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 
 public class CardGroup extends CardPool{
@@ -8,15 +9,13 @@ public class CardGroup extends CardPool{
     /**共以下几个状态
      * 未识别，单牌，对子，三牌，四带一，三带一对，杂顺，同花顺，同花五
      */
-
-
     private CardGroupType cardGroupType;
 
     private Card maxCard;
 
     CardGroup(){
         super();
-        this.cardGroupType = CardGroupType.UNKNOW;
+        this.cardGroupType = CardGroupType.UNKNOWN;
     }
 
     CardGroup(CardGroupType cardGroupType){
@@ -82,6 +81,32 @@ public class CardGroup extends CardPool{
             }else{
                 return false;
             }
+        }
+    }
+
+    /**
+     * 按顺子中的排序规则进行排序，仅适用于无大小王的情况。eg: A,2,3,...,J,Q,K
+     */
+    public void sequenceSort() {
+        Collections.sort(cards);
+        for (Card card; getLastCard().getRank() == CardRank.Card_2; ) {
+            cards.add(0, removeLastCard());
+            cardCounter++;
+        }
+        for (Card card; getLastCard().getRank() == CardRank.Card_A; ) {
+            cards.add(0, removeLastCard());
+            cardCounter++;
+        }
+    }
+
+    /**
+     * 按顺子中的排序规则（A作为顺尾）进行排序，仅适用于无大小王的情况。eg: 2,3,...,J,Q,K,A
+     */
+    public void sequenceAMaxSort() {
+        Collections.sort(cards);
+        for (Card card; getLastCard().getRank() == CardRank.Card_2; ) {
+            cards.add(0, removeLastCard());
+            cardCounter++;
         }
     }
 
