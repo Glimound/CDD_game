@@ -37,6 +37,8 @@ public class NormalRule implements Rule {
                     int num= groupOfcards.get(temp.getRank());
                     num++;
                     groupOfcards.put(temp.getRank(),num);
+                }else{
+                    groupOfcards.put(temp.getRank(),1);
                 }
             }
             if(groupOfcards.size()==2){
@@ -59,7 +61,7 @@ public class NormalRule implements Rule {
                     cards.setMaxCard(tempMaxCards.get(tempMaxCards.size()-1));
                      */
                     cards.sort();
-                    if(cards.getCards().get(2).equals(cards.getCards().get(3))){
+                    if(cards.getCards().get(2).getRank().equals(cards.getCards().get(3).getRank())){
                         cards.setMaxCard(cards.getCards().get(4));
                     }else{
                         cards.setMaxCard(cards.getCards().get(2));
@@ -70,7 +72,7 @@ public class NormalRule implements Rule {
                 } else if (groupOfcards.containsValue(4)) {
                     cards.setCardGroupType(CardGroupType.QUADRUPLEWITHSINGLE);//四带一
                     cards.sort();
-                    if(cards.getCards().get(0).equals(cards.getCards().get(1))){
+                    if(cards.getCards().get(0).getRank().equals(cards.getCards().get(1).getRank())){
                         cards.setMaxCard(cards.getCards().get(3));
                     }else{
                         cards.setMaxCard(cards.getCards().get(4));
@@ -99,6 +101,7 @@ public class NormalRule implements Rule {
                         }else{
                             if(cards.isSameSuits()){
                                 cards.setCardGroupType(CardGroupType.SAMESUITS);//同花五
+                                cards.sort();
                                 cards.setMaxCard(cards.getCards().get(4));
                                 return true;
                             }else
@@ -118,6 +121,7 @@ public class NormalRule implements Rule {
                         }else{
                             if(cards.isSameSuits()){
                                 cards.setCardGroupType(CardGroupType.SAMESUITS);//同花五
+                                cards.sort();
                                 cards.setMaxCard(cards.getCards().get(4));
                                 return true;
                             }else
@@ -133,7 +137,6 @@ public class NormalRule implements Rule {
                             if(cards.isSameSuits())
                             {
                                 cards.setCardGroupType(CardGroupType.SAMESUITS);//同花五
-                                cards.sort();
                                 cards.setMaxCard(cards.getCards().get(4));
                                 return true;
                             }else{
@@ -141,14 +144,13 @@ public class NormalRule implements Rule {
                                 return false;
                             }
                         }
+                        temp=cards.getCards().get(i);
                     }
                     if(cards.isSameSuits()){
                         cards.setCardGroupType(CardGroupType.S_SEQUENCE);//同花顺
-                        cards.sort();
                         cards.setMaxCard(cards.getCards().get(4));
                     }
                     else{
-                        cards.sort();
                         cards.setMaxCard(cards.getCards().get(4));
                         cards.setCardGroupType(CardGroupType.D_SEQUENCE);//杂顺
                     }
