@@ -14,7 +14,10 @@ public class Player {
     private CardPool ownCards;
     private String deviceID;
 
-    // 胜局 称号？
+    private int ownGameScore;
+    private int ownCardScore;
+
+    // TODO：胜局 称号？
 
     //Constructor
     public Player(String deviceID, String nickName){
@@ -75,5 +78,19 @@ public class Player {
 
     public String getDeviceID(){
         return this.deviceID;
+    }
+
+    public void setOwnGameScore(int gameScore){
+        this.ownGameScore=gameScore;
+    }
+    public int getOwnGameScore(){
+        return ownGameScore;
+    }
+
+    public void setOwnCardScore(int ownCardScore) {
+        this.ownCardScore = ownCardScore;
+    }
+    public int getOwnCardScore() {
+        return ownCardScore;
     }
 }
