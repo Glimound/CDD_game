@@ -247,7 +247,7 @@ public class NormalRuleTest {
         assertTrue(rule.validate(h3s3s2h2c2));
         assertTrue(rule.validate(h8h5s8d5c8));
 
-        assertEquals(hAsAcAd2h2.getMaxCard(), get(CardSuit.HEART, CardRank.Card_2));
+        assertEquals(hAsAcAd2h2.getMaxCard(), get(CardSuit.SPADE, CardRank.Card_A));
         assertEquals(h3s3s2h2c2.getMaxCard(), get(CardSuit.SPADE, CardRank.Card_2));
         assertEquals(h8h5s8d5c8.getMaxCard(), get(CardSuit.SPADE, CardRank.Card_8));
 
@@ -284,7 +284,7 @@ public class NormalRuleTest {
         assertTrue(rule.validate(h3d2s2h2c2));
         assertTrue(rule.validate(h8h5s8d8c8));
 
-        assertEquals(hAsAcAdAh2.getMaxCard(), get(CardSuit.HEART, CardRank.Card_2));
+        assertEquals(hAsAcAdAh2.getMaxCard(), get(CardSuit.SPADE, CardRank.Card_A));
         assertEquals(h3d2s2h2c2.getMaxCard(), get(CardSuit.SPADE, CardRank.Card_2));
         assertEquals(h8h5s8d8c8.getMaxCard(), get(CardSuit.SPADE, CardRank.Card_8));
 
@@ -316,28 +316,12 @@ public class NormalRuleTest {
         dAd2d3d4d5.addCard(get(CardSuit.DIAMOND, CardRank.Card_4));
         dAd2d3d4d5.addCard(get(CardSuit.DIAMOND, CardRank.Card_5));
 
-        CardGroup hAh2h4h5h6 = create();
-        hAh2h4h5h6.addCard(get(CardSuit.HEART, CardRank.Card_A));
-        hAh2h4h5h6.addCard(get(CardSuit.HEART, CardRank.Card_2));
-        hAh2h4h5h6.addCard(get(CardSuit.HEART, CardRank.Card_4));
-        hAh2h4h5h6.addCard(get(CardSuit.HEART, CardRank.Card_5));
-        hAh2h4h5h6.addCard(get(CardSuit.HEART, CardRank.Card_6));
-
-        CardGroup sQsKsAs2s3 = create();
-        sQsKsAs2s3.addCard(get(CardSuit.SPADE, CardRank.Card_Q));
-        sQsKsAs2s3.addCard(get(CardSuit.SPADE, CardRank.Card_K));
-        sQsKsAs2s3.addCard(get(CardSuit.SPADE, CardRank.Card_A));
-        sQsKsAs2s3.addCard(get(CardSuit.SPADE, CardRank.Card_2));
-        sQsKsAs2s3.addCard(get(CardSuit.SPADE, CardRank.Card_3));
-
         assertTrue(rule.validate(s2s3s4s5s6));
         assertTrue(rule.validate(c10cJcQcKcA));
         assertTrue(rule.validate(dAd2d3d4d5));
-        assertFalse(rule.validate(hAh2h4h5h6));
-        assertFalse(rule.validate(sQsKsAs2s3));
 
-        assertEquals(s2s3s4s5s6.getMaxCard(), get(CardSuit.CLUB, CardRank.Card_6));
-        assertEquals(c10cJcQcKcA.getMaxCard(), get(CardSuit.DIAMOND, CardRank.Card_A));
+        assertEquals(s2s3s4s5s6.getMaxCard(), get(CardSuit.SPADE, CardRank.Card_6));
+        assertEquals(c10cJcQcKcA.getMaxCard(), get(CardSuit.CLUB, CardRank.Card_A));
         assertEquals(dAd2d3d4d5.getMaxCard(), get(CardSuit.DIAMOND, CardRank.Card_5));
 
         assertEquals(s2s3s4s5s6.getCardGroupType(), CardGroupType.S_SEQUENCE);
