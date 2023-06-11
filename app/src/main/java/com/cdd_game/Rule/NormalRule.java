@@ -178,7 +178,7 @@ public class NormalRule implements Rule {
      * @param remainingCards
      * @return
      */
-    public HashMap<Player,Integer> computeGameScore(HashMap<Player, CardPool> remainingCards){
+    public HashMap<Player,Integer> computeGameScore(HashMap<Player, CardPool> remainingCards) throws Exception {
         HashMap<Player,Integer> playerGameScores=new HashMap<>();
         HashMap<Player,Integer> cardScores=computeCardScore(remainingCards);
         for(Player player:cardScores.keySet()){
@@ -205,7 +205,7 @@ public class NormalRule implements Rule {
      * @param remainingCards
      * @return
      */
-    private HashMap<Player,Integer> computeCardScore(HashMap<Player, CardPool> remainingCards) {
+    private HashMap<Player,Integer> computeCardScore(HashMap<Player, CardPool> remainingCards) throws Exception {
         HashMap<Player,Integer> playerCardScores=new HashMap<>();
         for(Player player:remainingCards.keySet()){
 
@@ -218,11 +218,15 @@ public class NormalRule implements Rule {
             else if(remainingCards.get(player).size()<10&&remainingCards.get(player).size()>=8){
                 playerCardScores.put(player,remainingCards.get(player).size()*2);
             }
-            else if (remainingCards.get(player).size()<13&&remainingCards.get(player).size()>=10) {
+            else if (remainingCards.get(player).size()<=13&&remainingCards.get(player).size()>=10) {
                 playerCardScores.put(player,remainingCards.get(player).size()*3);
             }
             else if (remainingCards.get(player).size()==14) {
                 playerCardScores.put(player,remainingCards.get(player).size()*4);
+            }
+
+            else if(remainingCards.get(player).size()>14){
+                throw new Exception("remainingCard is invalid");
             }
             //如果玩家手中剩余牌不少于8，且有黑桃2则得分再翻倍
             if(remainingCards.get(player).size()>=8&&remainingCards.get(player).getCardBySuitAndRank(CardSuit.SPADE,CardRank.Card_2)!=null){
