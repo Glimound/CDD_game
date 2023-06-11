@@ -80,17 +80,4 @@ public class Player {
         return this.deviceID;
     }
 
-    public void setOwnGameScore(int gameScore){
-        this.ownGameScore=gameScore;
-    }
-    public int getOwnGameScore(){
-        return ownGameScore;
-    }
-
-    public void setOwnCardScore(int ownCardScore) {
-        this.ownCardScore = ownCardScore;
-    }
-    public int getOwnCardScore() {
-        return ownCardScore;
-    }
 }

@@ -1,4 +1,6 @@
 package com.cdd_game.Rule;
+import android.os.Build;
+
 import com.cdd_game.Card.*;
 import com.cdd_game.Player.Player;
 
@@ -178,7 +180,7 @@ public class NormalRule implements Rule {
      */
     public HashMap<Player,Integer> computeGameScore(HashMap<Player, CardPool> remainingCards){
         HashMap<Player,Integer> playerGameScores=new HashMap<>();
-        HashMap<Player,Integer> cardScores=this.computeCardScore(remainingCards);
+        HashMap<Player,Integer> cardScores=computeCardScore(remainingCards);
         for(Player player:cardScores.keySet()){
             int scores=0;
             for(Player player1:cardScores.keySet()){
@@ -192,7 +194,7 @@ public class NormalRule implements Rule {
     }
 
     /**计算玩家的牌分
-     * 规则：记剩余牌为n,
+     * 规则：记剩余牌为n,若n<0,则返回null
      * (1)n<8时，牌分为n
      * (2)8≤n<l0时，牌分为2n
      * (3)10≤n<13时，牌分为3n
@@ -203,25 +205,30 @@ public class NormalRule implements Rule {
      * @param remainingCards
      * @return
      */
-    private HashMap<Player,Integer> computeCardScore(HashMap<Player, CardPool> remainingCards){
+    private HashMap<Player,Integer> computeCardScore(HashMap<Player, CardPool> remainingCards) {
         HashMap<Player,Integer> playerCardScores=new HashMap<>();
         for(Player player:remainingCards.keySet()){
+
+            if(remainingCards.get(player).size()<0)
+                return null;
             //根据剩余牌数计算分数
-            if(remainingCards.get(player).size()<8){
-                player.setOwnCardScore(remainingCards.get(player).size());
+            else if(remainingCards.get(player).size()<8){
+               playerCardScores.put(player,remainingCards.get(player).size());
             }
             else if(remainingCards.get(player).size()<10&&remainingCards.get(player).size()>=8){
-                player.setOwnCardScore(remainingCards.get(player).size()*2);
+                playerCardScores.put(player,remainingCards.get(player).size()*2);
             }
             else if (remainingCards.get(player).size()<13&&remainingCards.get(player).size()>=10) {
-                player.setOwnCardScore(remainingCards.get(player).size()*3);
+                playerCardScores.put(player,remainingCards.get(player).size()*3);
             }
             else if (remainingCards.get(player).size()==14) {
-                player.setOwnCardScore(remainingCards.get(player).size()*4);
+                playerCardScores.put(player,remainingCards.get(player).size()*4);
             }
             //如果玩家手中剩余牌不少于8，且有黑桃2则得分再翻倍
             if(remainingCards.get(player).size()>=8&&remainingCards.get(player).getCardBySuitAndRank(CardSuit.SPADE,CardRank.Card_2)!=null){
-                player.setOwnCardScore(player.getOwnCardScore()*2);
+                int cardScores=playerCardScores.get(player);
+                    playerCardScores.put(player,cardScores*2);
+
             }
         }
         return playerCardScores;
