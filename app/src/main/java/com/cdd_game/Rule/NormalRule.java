@@ -217,7 +217,7 @@ public class NormalRule implements Rule {
             else if (remainingCards.get(player).size()==14) {
                 player.setOwnCardScore(remainingCards.get(player).size()*4);
             }
-            //如果玩家手中剩余牌不少于8，则得分再翻倍
+            //如果玩家手中剩余牌不少于8，且有黑桃2则得分再翻倍
             if(remainingCards.get(player).size()>=8&&remainingCards.get(player).getCardBySuitAndRank(CardSuit.SPADE,CardRank.Card_2)!=null){
                 player.setOwnCardScore(player.getOwnCardScore()*2);
             }
