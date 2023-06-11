@@ -14,8 +14,6 @@ public class Player {
     private CardPool ownCards;
     private String deviceID;
 
-    private int ownGameScore;
-    private int ownCardScore;
 
     // TODO：胜局 称号？
 
