@@ -218,14 +218,14 @@ public class NormalRule implements Rule {
             else if(remainingCards.get(player).size()<10&&remainingCards.get(player).size()>=8){
                 playerCardScores.put(player,remainingCards.get(player).size()*2);
             }
-            else if (remainingCards.get(player).size()<=13&&remainingCards.get(player).size()>=10) {
+            else if (remainingCards.get(player).size()<13&&remainingCards.get(player).size()>=10) {
                 playerCardScores.put(player,remainingCards.get(player).size()*3);
             }
-            else if (remainingCards.get(player).size()==14) {
+            else if (remainingCards.get(player).size()==13) {
                 playerCardScores.put(player,remainingCards.get(player).size()*4);
             }
 
-            else if(remainingCards.get(player).size()>14){
+            else if(remainingCards.get(player).size()>13){
                 throw new Exception("remainingCard is invalid");
             }
             //如果玩家手中剩余牌不少于8，且有黑桃2则得分再翻倍
