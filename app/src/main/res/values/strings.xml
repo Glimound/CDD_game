@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">CDD_game</string>
+    <string-array name="rule">
+        <item>南方规则</item>
+        <item>北方规则（待开发）</item>
+    </string-array>
 </resources>
