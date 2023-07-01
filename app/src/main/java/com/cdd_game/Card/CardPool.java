@@ -16,7 +16,7 @@ public class CardPool {
         cardCounter = 0;
     }
 
-    ArrayList<Card> getCards() {
+    public ArrayList<Card> getCards() {
         return cards;
     }
 
