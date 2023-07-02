@@ -1,5 +1,8 @@
 package com.cdd_game.Rule;
+import android.os.Build;
+
 import com.cdd_game.Card.*;
+import com.cdd_game.Player.Player;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -167,5 +170,71 @@ public class NormalRule implements Rule {
 
     public boolean compareToCards(CardGroup preCardGroup,CardGroup curCardGroup){
         return curCardGroup.compare(preCardGroup);
+    }
+
+    /**通过调用计算牌分的函数 computeCardScores()来计算每个玩家的得分
+     * 传入的参数为玩家到玩家剩余牌的映射
+     * 返回值为玩家到玩家得分的映射
+     * @param remainingCards
+     * @return
+     */
+    public HashMap<Player,Integer> computeGameScore(HashMap<Player, CardPool> remainingCards) throws Exception {
+        HashMap<Player,Integer> playerGameScores=new HashMap<>();
+        HashMap<Player,Integer> cardScores=computeCardScore(remainingCards);
+        for(Player player:cardScores.keySet()){
+            int scores=0;
+            for(Player player1:cardScores.keySet()){
+                if(player1.equals(player))
+                    scores-=3*cardScores.get(player1);
+                else scores+=cardScores.get(player1);
+            }
+            playerGameScores.put(player,scores);
+        }
+        return playerGameScores;
+    }
+
+    /**计算玩家的牌分
+     * 规则：记剩余牌为n,若n<0,则返回null
+     * (1)n<8时，牌分为n
+     * (2)8≤n<l0时，牌分为2n
+     * (3)10≤n<13时，牌分为3n
+     * (4)n=13时，牌分为4n
+     * (5)如果游戏结束时，手上还有8张或更多的牌，同时有黑桃2，牌分还要再乘以2
+     * 传入的参数为玩家到玩家剩余牌的映射
+     * 返回值为玩家到玩家得分的映射
+     * @param remainingCards
+     * @return
+     */
+    private HashMap<Player,Integer> computeCardScore(HashMap<Player, CardPool> remainingCards) throws Exception {
+        HashMap<Player,Integer> playerCardScores=new HashMap<>();
+        for(Player player:remainingCards.keySet()){
+
+            if(remainingCards.get(player).size()<0)
+                return null;
+            //根据剩余牌数计算分数
+            else if(remainingCards.get(player).size()<8){
+               playerCardScores.put(player,remainingCards.get(player).size());
+            }
+            else if(remainingCards.get(player).size()<10&&remainingCards.get(player).size()>=8){
+                playerCardScores.put(player,remainingCards.get(player).size()*2);
+            }
+            else if (remainingCards.get(player).size()<13&&remainingCards.get(player).size()>=10) {
+                playerCardScores.put(player,remainingCards.get(player).size()*3);
+            }
+            else if (remainingCards.get(player).size()==13) {
+                playerCardScores.put(player,remainingCards.get(player).size()*4);
+            }
+
+            else if(remainingCards.get(player).size()>13){
+                throw new Exception("remainingCard is invalid");
+            }
+            //如果玩家手中剩余牌不少于8，且有黑桃2则得分再翻倍
+            if(remainingCards.get(player).size()>=8&&remainingCards.get(player).getCardBySuitAndRank(CardSuit.SPADE,CardRank.Card_2)!=null){
+                int cardScores=playerCardScores.get(player);
+                    playerCardScores.put(player,cardScores*2);
+
+            }
+        }
+        return playerCardScores;
     }
 }

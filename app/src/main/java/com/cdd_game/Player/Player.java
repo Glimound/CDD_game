@@ -14,7 +14,7 @@ public class Player {
     private CardPool ownCards;
     private String deviceID;
 
-    // 胜局 称号？
+    // TODO：胜局 称号？
 
     //Constructor
     public Player(String deviceID, String nickName){
@@ -76,4 +76,5 @@ public class Player {
     public String getDeviceID(){
         return this.deviceID;
     }
+
 }

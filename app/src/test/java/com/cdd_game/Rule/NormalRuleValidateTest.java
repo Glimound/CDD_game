@@ -14,7 +14,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class NormalRuleTest {
+public class NormalRuleValidateTest {
 
     static CardFactory cardFactory;
     static CardPoolFactory cardPoolFactory;
