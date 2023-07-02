@@ -350,4 +350,24 @@ public class MainActivity extends AppCompatActivity {
             checkPermission();
         }
     }
+
+    private void gameSettlement(){
+            Button continue_button=(Button)this.findViewById(R.id.continue_button);//创建房间
+            Button end_button=(Button)this.findViewById(R.id.end_button);  //加入房间
+
+            continue_button.setOnClickListener(new View.OnClickListener(){
+                @Override
+                public void onClick(View v){
+                    setContentView(R.layout.game_ui);
+                    game();
+                }
+            });
+            end_button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    setContentView(R.layout.activity_main);
+                    idle();
+                }
+            });
+    }
 }

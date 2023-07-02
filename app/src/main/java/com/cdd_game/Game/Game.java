@@ -41,6 +41,7 @@ public class Game {
         this.playerOrder = new ArrayList<>();
     }
 
+    public Game(){}
     /**
      * 返回游戏实例
      */
@@ -65,9 +66,9 @@ public class Game {
     }
 
     /**
-     * 开始游戏：初始化游戏、发牌、设置玩家出牌顺序
+     * 主机开始游戏：初始化游戏、发牌、设置玩家出牌顺序
      */
-    public void start(String gameID, Rule rule, Set<Player> players, Player winner) throws Exception {
+    public void server_start(String gameID, Rule rule, Set<Player> players, Player winner) throws Exception {
         if (gameInstance == null) {
             initialize(gameID, rule, players);
             dealCards();
@@ -75,6 +76,17 @@ public class Game {
         }
     }
 
+    /**
+     *客户端：根据主机传递的信息，设置gameID，rule,winner,initialCards,discardCards,playOrder等等
+     * TODO:确认客户端应该收到什么信息并传递给start函数
+     * @throws Exception
+     */
+    public void client_start(String gameID, Rule rule, Set<Player> players, Player winner) throws Exception {
+        if (gameInstance == null) {
+            initialize(gameID, rule, players);
+            setPlayerOrder(winner);
+        }
+    }
     /**
      * 打乱牌堆，将牌堆均等分为n份（n为玩家人数），并分配给每个玩家
      */
