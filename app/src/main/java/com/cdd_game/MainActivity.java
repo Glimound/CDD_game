@@ -142,7 +142,6 @@ public class MainActivity extends AppCompatActivity {
                     Log.d("Bluetooth", "Failed to open bluetooth");
             });
 
-    public GameRoom gameRoom;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
