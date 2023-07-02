@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
+import com.cdd_game.Message.MessageSchema;
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
 
@@ -65,7 +66,7 @@ public class ConnectedThread extends Thread {
                 MessageSchema msg = new Gson().fromJson(reader, MessageSchema.class);
 
                 // 将收到的消息对象发回主线程
-                Message readMsg = mmHandler.obtainMessage(MessageType.MESSAGE_READ.ordinal(), msg);
+                Message readMsg = mmHandler.obtainMessage(Bluetooth.MESSAGE_READ, msg);
                 mmHandler.sendMessage(readMsg);
 
             } catch (IOException e) {
@@ -86,13 +87,13 @@ public class ConnectedThread extends Thread {
             }
 
             // 将发送成功的消息发回主线程
-            mmHandler.sendEmptyMessage(MessageType.MESSAGE_WRITE.ordinal());
+            mmHandler.sendEmptyMessage(Bluetooth.MESSAGE_WRITTEN);
 
         } catch (IOException e) {
             Log.e("Bluetooth", "Error occurred when sending data", e);
 
             // 将发送失败的消息发回主线程
-            mmHandler.sendEmptyMessage(MessageType.MESSAGE_SENT_FAILED.ordinal());
+            mmHandler.sendEmptyMessage(Bluetooth.MESSAGE_SENT_FAILED);
         }
     }
 

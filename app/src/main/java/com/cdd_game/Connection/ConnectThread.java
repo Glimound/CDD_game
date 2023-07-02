@@ -28,7 +28,7 @@ public class ConnectThread extends Thread {
             tmp = device.createRfcommSocketToServiceRecord(BLUETOOTH_UUID);
             Log.d("Bluetooth", "Client: Get socket success.");
         } catch (IOException e) {
-            Log.e("Bluetooth", "Client: Socket's create() method failed", e);
+            Log.e("Bluetooth", "Client: Socket's create() method failed.", e);
         }
         mmSocket = tmp;
     }
@@ -41,11 +41,14 @@ public class ConnectThread extends Thread {
             // 阻塞直到返回
             mmSocket.connect();
         } catch (IOException connectException) {
+            Log.e("Bluetooth", "Client: Connected to server failed.", connectException);
             cancel();
             return;
         }
 
+        Log.d("Bluetooth", "Client: Connected to server success.");
         manageConnectedSocket(mmSocket);  // 连接成功，执行操作
+        mmBluetooth.setConnectedThreadOfClient(mmConnectedThread);
     }
 
     public void cancel() {
@@ -53,14 +56,14 @@ public class ConnectThread extends Thread {
             mmSocket.close();
             Log.d("Bluetooth", "Client: Client socket closed.");
         } catch (IOException e) {
-            Log.e("Bluetooth", "Could not close the client socket", e);
+            Log.e("Bluetooth", "Could not close the client socket.", e);
         }
     }
 
     public void manageConnectedSocket(BluetoothSocket mmSocket) {
         mmConnectedThread = new ConnectedThread(mmSocket, mmHandler);
         mmConnectedThread.start();
-        mmHandler.sendEmptyMessage(MessageType.MSG_CONNECTED_TO_SERVER.ordinal());
+        mmHandler.sendEmptyMessage(Bluetooth.CONNECTED_TO_SERVER);
         // TODO: 发送初始化信息：player name等等 写在main activity中
     }
 

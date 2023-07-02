@@ -27,8 +27,7 @@ public class Game {
     private int playerNum;
     private int gameTurn;
 
-
-    private Game(String gameID,CardPool initialCards,CardPool discardCards,Rule rule ,Set<Player> players) {
+    private Game(String gameID, CardPool initialCards, CardPool discardCards, Rule rule , Set<Player> players) {
         this.gameID = gameID;
         this.initialCards = initialCards;
         this.discardCards = discardCards;
@@ -163,14 +162,19 @@ public class Game {
     /**
      * 返回牌局中每个玩家的最终得分
      */
-    private HashMap<Player, Integer> getGameScore() {
+    private HashMap<Player, Integer> getGameScore() throws Exception {
         HashMap<Player, CardPool> remainingCards = new HashMap<>();
         for (Player player : players) {
             remainingCards.put(player, player.getOwnCards());
         }
-        // return rule.computeScore(remainingCards);
-        return null;
+        return rule.computeGameScore(remainingCards);
     }
+
+    public void addPlayer(Player player) {
+        players.add(player);
+        playerNum++;
+    }
+
 
     public Rule getRule(){
         return rule;
@@ -192,6 +196,10 @@ public class Game {
         return players;
     }
 
+    public int getPlayerNum() {
+        return playerNum;
+    }
+
     public ArrayList<Player> getPlayerOrder() {
         return playerOrder;
     }
@@ -202,5 +210,13 @@ public class Game {
 
     public void gameTurnPlusOne() {
         gameTurn++;
+    }
+
+    public void setRule(Rule rule) {
+        this.rule = rule;
+    }
+
+    public void setPlayers(Set<Player> players) {
+        this.players = players;
     }
 }
