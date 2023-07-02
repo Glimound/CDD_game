@@ -1,6 +1,7 @@
 package com.cdd_game.Game;
 
 import com.cdd_game.Card.Card;
+import com.cdd_game.Card.CardGroup;
 import com.cdd_game.Card.CardPool;
 import com.cdd_game.Card.CardPoolFactory;
 import com.cdd_game.Card.CardRank;
@@ -26,6 +27,7 @@ public class Game {
     private ArrayList<Player> playerOrder;
     private int playerNum;
     private int gameTurn;
+    private CardGroup lastCards;
 
 
     private Game(String gameID,CardPool initialCards,CardPool discardCards,Rule rule ,Set<Player> players) {
@@ -36,6 +38,7 @@ public class Game {
         this.players = players;
         this.playerNum = players.size();
         this.gameTurn = 0;
+        this.lastCards=null;
         this.playerOrder = new ArrayList<>();
     }
 
@@ -126,11 +129,13 @@ public class Game {
      * 返回当前回合该出牌的玩家
      */
     public Player getPlayerToPlayCard() {
-        return playerOrder.get(gameTurn % 4);
+        //playOrder为从0开始的链表，需要turn模4再减一
+        return playerOrder.get(gameTurn % 4-1);
         /* TODO:不限于玩家人数（使用策略模式，拼接不同的Rule）
         return playerOrder.get(gameTurn % ruleStrategy.getPlayerNumRule().getPlayerNum());
          */
     }
+
 
     /**
      * TODO: 涉及蓝牙连接
@@ -147,9 +152,10 @@ public class Game {
      * 结束游戏，向玩家发送信息，并更改对应的state；应当由玩家的State实例调用（可通过Controller）。
      * 恢复GameRoom和Player等实例中部分具有持久性的变量恢复至Game实例初始化之前的状态
      */
-    public void endGame() {
+    public void endGame() throws Exception {
         // 获得输赢信息
         // 结算 getGameScore()
+        getGameScore();
         // 根据游戏输赢发送消息给对应player
 
         for (Player player : players) {
@@ -163,13 +169,12 @@ public class Game {
     /**
      * 返回牌局中每个玩家的最终得分
      */
-    private HashMap<Player, Integer> getGameScore() {
+    private HashMap<Player, Integer> getGameScore() throws Exception {
         HashMap<Player, CardPool> remainingCards = new HashMap<>();
         for (Player player : players) {
             remainingCards.put(player, player.getOwnCards());
         }
-        // return rule.computeScore(remainingCards);
-        return null;
+        return rule.computeGameScore(remainingCards);
     }
 
     public Rule getRule(){
@@ -202,5 +207,11 @@ public class Game {
 
     public void gameTurnPlusOne() {
         gameTurn++;
+    }
+    public void setLastCards(CardGroup LastCards){
+        lastCards=LastCards;
+    }
+    public CardGroup getLastCards(){
+        return lastCards;
     }
 }
