@@ -36,11 +36,13 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -167,8 +169,8 @@ public class MainActivity extends AppCompatActivity {
         connector.initialize(this, handler);
         state = State.INIT;
 
+        // Hide the status bar
         View decorView = getWindow().getDecorView();
-        // Hide the status bar.
         int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
         decorView.setSystemUiVisibility(uiOptions);
 
@@ -197,6 +199,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void settingRoom(){
+        state = State.SERVER_SETTING;
         ImageButton imageButton= (ImageButton) this.findViewById(R.id.imageButton);
         Button button=(Button)this.findViewById(R.id.button);
         Spinner spinner=(Spinner) findViewById(R.id.rule_dropdown);
@@ -253,17 +256,34 @@ public class MainActivity extends AppCompatActivity {
                 GameRoom.createGameRoom(rule[0], 4, null, players);
                 GameRoom.getGameRoomInstance().addPlayer(player);
 
-                setContentView(R.layout.game_ui);
-                game();
+                state=State.SERVER_WAITING;
+                setContentView(R.layout.waiting1);
+                waiting();
             }
         });
-
-        state = State.SERVER_SETTING;
     }
 
     private void searchingRoom(){
+        state=State.CLIENT_SCANNING_GAME_ROOM;
+        ListView listView=this.findViewById(R.id.bt_device_list);
+        ArrayList<String>itemList=new ArrayList<>();
+        itemList.add("no1");
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, itemList);
+        listView.setAdapter(adapter);
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                /**
+                 *  position为点击项的索引
+                 */
+                state=State.CLIENT_WAITING;
+                setContentView(R.layout.waiting1);
+                waiting();
+            }
+        });
         ImageButton imageButton= (ImageButton) this.findViewById(R.id.imageButton_exit);
-        EditText id=(EditText) findViewById(R.id.id);
+        EditText id=(EditText) findViewById(R.id.ClientId);
         imageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -287,6 +307,32 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private void waiting(){
+        Button button=this.findViewById(R.id.readyOrStar);
+        /**
+         * TODO:根据状态的不同设置按钮有不同的文本以及不同的动作
+         */
+        if(state==State.CLIENT_WAITING){
+            button.setText("准备");
+            button.setOnClickListener(new View.OnClickListener(){
+                @Override
+                public void onClick(View v){
+                    state=State.CLIENT_READY;
+                    button.setText("等待游戏开始");
+                }
+            });
+        }else if(state==State.SERVER_WAITING){
+            button.setText("开始");
+            button.setOnClickListener(new View.OnClickListener(){
+                @Override
+                public void onClick(View v){
+                    state=State.SERVER_PLAYING;
+                    setContentView(R.layout.game_ui);
+                    game();
+                }
+            });
+        }
+    }
     private void game(){
 
         HashMap<Integer,String>imageMap=new HashMap<>();
@@ -296,7 +342,7 @@ public class MainActivity extends AppCompatActivity {
         //player1，玩家自身
         LinearLayout LinearLayout1=(LinearLayout) findViewById(R.id.layout_player1);
         LinearLayout targetLayout=(LinearLayout) findViewById(R.id.Target_ui);
-        int overlap=50;
+        int overlap=45;
         int liftDistance=40;
 
         for(int i=0;i<13;i++){
@@ -394,7 +440,7 @@ public class MainActivity extends AppCompatActivity {
 
                 /**
                  * 其余玩家牌变少，仅为测试用，后续需修改
-                 *                     imageView2.setImageResource(func.getDrawableId(MainActivity.this,num));其中num为剩下牌的数量
+                 * imageView2.setImageResource(func.getDrawableId(MainActivity.this,num));其中num为剩下牌的数量
                  */
             }
 
