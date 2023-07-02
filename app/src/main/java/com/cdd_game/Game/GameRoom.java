@@ -24,7 +24,7 @@ public class GameRoom {
     private Player winner;
 
 
-    private GameRoom() {
+    public GameRoom() {
 
     }
 

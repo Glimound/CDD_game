@@ -1,5 +1,6 @@
 package com.cdd_game;
 
+import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -27,11 +28,15 @@ import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.cdd_game.Game.GameRoom;
+
 import java.lang.annotation.Target;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+    public GameRoom gameRoom;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         idle();
     }
+    private FuncOfActivity func=new FuncOfActivity();
 
     private void idle(){
         Button button1=(Button)this.findViewById(R.id.button1);//创建房间
@@ -102,6 +108,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 setContentView(R.layout.game_ui);
+                /**
+                 * TODO:初始化游戏房间
+                 */
+
                 game();
             }
         });
@@ -109,6 +119,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void searchingRoom(){
         ImageButton imageButton= (ImageButton) this.findViewById(R.id.imageButton_exit);
+        EditText id=(EditText) findViewById(R.id.id);
         imageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -116,13 +127,28 @@ public class MainActivity extends AppCompatActivity {
                 idle();
             }
         });
+        id.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                String nickName=s.toString();
+                /**
+                 * TODO:将用户名（此处为加入房间玩家）设置为id
+                 */
+            }
+        });
     }
 
     private void game(){
 
-        final boolean[] isCardLifted = {false}; // 用于跟踪牌的状态，默认为未上升
-        ImageButton imageButton3=(ImageButton) findViewById(R.id.imageButton3);
+        HashMap<Integer,String>imageMap=new HashMap<>();
 
+        ImageButton imageButton3=(ImageButton) findViewById(R.id.imageButton3);
+        ImageView imageView2=(ImageView) findViewById(R.id.cards2);
         //player1，玩家自身
         LinearLayout LinearLayout1=(LinearLayout) findViewById(R.id.layout_player1);
         LinearLayout targetLayout=(LinearLayout) findViewById(R.id.Target_ui);
@@ -134,8 +160,18 @@ public class MainActivity extends AppCompatActivity {
             imageButton.setLayoutParams(new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT));
-            String name="club_2";
-            imageButton.setImageResource(R.drawable.club_2);
+
+            /**
+             * TODO:通过循环将卡牌放入布局中，如下面两行所示
+             */
+            String suit="CLUB";
+            int resId=func.getDrawableId(this,suit.toLowerCase(),"3");
+            String name=getResources().getResourceName(resId);
+            imageMap.put(i,name);
+            imageButton.setImageResource(resId);
+
+
+
             imageButton.setBackground(new ColorDrawable(Color.TRANSPARENT));
             LinearLayout.LayoutParams layoutParams=(LinearLayout.LayoutParams)imageButton.getLayoutParams();
             if(i>0){
@@ -145,7 +181,7 @@ public class MainActivity extends AppCompatActivity {
             imageButton.setLayoutParams(layoutParams);
             LinearLayout1.addView(imageButton);
 
-            //final boolean[] isCardLifted = {false}; // 用于跟踪牌的状态，默认为未上升
+            final boolean[] isCardLifted = {false}; // 用于跟踪牌的状态，默认为未上升
             imageButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -173,16 +209,51 @@ public class MainActivity extends AppCompatActivity {
         imageButton3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                /**
+                 * 还未测试
+                 */
                 targetLayout.removeAllViews();
+                int num=0;
+                int num1=0;
+                int count=LinearLayout1.getChildCount();
+
+                HashMap<Integer,String>tempMap=new HashMap<>();
+
                 for(int i=0;i<LinearLayout1.getChildCount();i++){
                     ImageButton child=(ImageButton) LinearLayout1.getChildAt(i);
                     if(child.getTranslationY()!=0){
+                        /**
+                         * 通过for循环玩家所出的牌
+                         */
+                        String tempCardName=imageMap.get(num1);
+                        int index=tempCardName.indexOf("_");
+                        String cardSuit=tempCardName.substring(0,index).toUpperCase();
+                        String cardRank=tempCardName.substring(index+1,tempCardName.length()).toUpperCase();
+
+
                         LinearLayout1.removeView(child);
                         targetLayout.addView(child);
                         i--;
+                        count--;
+
+
+                    }else{
+                        tempMap.put(num,imageMap.get(num1));
+                        num++;
                     }
+                    num1++;
                 }
+                if(tempMap.size()==count){
+                    imageMap.putAll(tempMap);
+                }
+                LinearLayout1.setGravity(View.TEXT_ALIGNMENT_CENTER);
+
+                /**
+                 * 其余玩家牌变少，仅为测试用，后续需修改
+                 *                     imageView2.setImageResource(func.getDrawableId(MainActivity.this,num));其中num为剩下牌的数量
+                 */
             }
+
         });
 
     }

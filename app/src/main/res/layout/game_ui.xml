@@ -10,8 +10,8 @@
 
     <ImageButton
         android:id="@+id/imageButton3"
-        android:layout_width="50dp"
-        android:layout_height="40dp"
+        android:layout_width="62dp"
+        android:layout_height="45dp"
         android:backgroundTint="@color/cardview_shadow_end_color"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -24,8 +24,8 @@
 
     <ImageButton
         android:id="@+id/imageButton2"
-        android:layout_width="50dp"
-        android:layout_height="40dp"
+        android:layout_width="69dp"
+        android:layout_height="50dp"
         android:backgroundTint="@color/cardview_shadow_end_color"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -51,14 +51,97 @@
 
     <LinearLayout
         android:id="@+id/layout_player1"
-        android:layout_width="619dp"
-        android:layout_height="123dp"
+        android:layout_width="534dp"
+        android:layout_height="102dp"
+        android:gravity="center_horizontal"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.482"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0"></LinearLayout>
+        app:layout_constraintVertical_bias="0.873"></LinearLayout>
 
 
+    <ImageView
+        android:layout_width="100dp"
+        android:layout_height="82dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.978"
+        app:layout_constraintStart_toEndOf="@+id/Target_ui"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.881"
+        app:srcCompat="@drawable/head" />
+
+    <ImageView
+        android:layout_width="100dp"
+        android:layout_height="82dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/Target_ui"
+        app:layout_constraintHorizontal_bias="0.13"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.553"
+        app:srcCompat="@drawable/head" />
+
+    <ImageView
+        android:id="@+id/cards2"
+        android:layout_width="100dp"
+        android:layout_height="82dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/Target_ui"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.316"
+        app:srcCompat="@drawable/back13" />
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="100dp"
+        android:layout_height="82dp"
+        app:layout_constraintBottom_toTopOf="@+id/cards2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.422"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.355"
+        app:srcCompat="@drawable/head" />
+
+    <ImageView
+        android:id="@+id/cards3"
+        android:layout_width="99dp"
+        android:layout_height="82dp"
+        app:layout_constraintBottom_toTopOf="@+id/Target_ui"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/imageView2"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.727"
+        app:srcCompat="@drawable/back13" />
+
+    <ImageView
+        android:id="@+id/imageView3"
+        android:layout_width="100dp"
+        android:layout_height="82dp"
+        app:layout_constraintBottom_toTopOf="@+id/layout_player1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.989"
+        app:layout_constraintStart_toEndOf="@+id/cards3"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.167"
+        app:srcCompat="@drawable/head" />
+
+    <ImageView
+        android:id="@+id/cards4"
+        android:layout_width="100dp"
+        android:layout_height="82dp"
+        app:layout_constraintBottom_toTopOf="@+id/layout_player1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.979"
+        app:layout_constraintStart_toEndOf="@+id/Target_ui"
+        app:layout_constraintTop_toBottomOf="@+id/imageView3"
+        app:layout_constraintVertical_bias="0.053"
+        app:srcCompat="@drawable/back13" />
 </androidx.constraintlayout.widget.ConstraintLayout>
