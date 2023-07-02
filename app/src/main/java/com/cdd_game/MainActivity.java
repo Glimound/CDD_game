@@ -45,6 +45,7 @@ import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.cdd_game.Game.Game;
 import com.cdd_game.Game.GameRoom;
 
 import java.lang.annotation.Target;
@@ -54,10 +55,13 @@ import java.util.List;
 import com.cdd_game.Message.BehaviourType;
 import com.cdd_game.Connection.Bluetooth;
 import com.cdd_game.Connection.ConnectAdapter;
+import com.cdd_game.Message.MessageParser;
 import com.cdd_game.Message.MessageSchema;
 import com.cdd_game.Game.GameRoom;
 import com.cdd_game.Message.MsgShakeHands;
 import com.cdd_game.Player.Player;
+import com.cdd_game.Rule.NormalRule;
+import com.cdd_game.Rule.Rule;
 
 import java.util.Calendar;
 import java.util.HashMap;
@@ -68,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
     private GameRoom gameRoom = null;
     private Toast toast = null;
     public State state;
+    private MessageParser messageParser = new MessageParser(this);
     private HashMap<Player, BluetoothSocket> socketMapping;
 
     private Handler handler = new Handler(Looper.myLooper()) {
@@ -82,13 +87,13 @@ public class MainActivity extends AppCompatActivity {
                     MessageSchema newMsg = new MsgShakeHands(Calendar.getInstance().getTimeInMillis(),
                             player.getDeviceID(), player.getNickName(), null, null);
                     connector.getConnectedThreadOfClient().write(newMsg);
-                    // TODO: 在此处切换ui，进入游戏房间等待界面
+                    // TODO: 在此处切换ui，进入游戏房间等待界面（应为握手后）
                     break;
                 case Bluetooth.GOT_A_CLIENT:    // 服务器连接上客户端
 
                     break;
                 case Bluetooth.MESSAGE_READ:    // 接收到socket传来的msg
-
+                    messageParser.parseMessage((MessageSchema) msg.obj);
                     break;
             }
         }
@@ -155,13 +160,17 @@ public class MainActivity extends AppCompatActivity {
         bluetoothFilter.addAction(BluetoothAdapter.ACTION_SCAN_MODE_CHANGED);
         bluetoothFilter.addAction(BluetoothDevice.ACTION_FOUND);
         bluetoothFilter.addAction(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
-
         registerReceiver(bluetoothActionReceiver, bluetoothFilter);
-
         registerReceiver(bluetoothStateReceiver, new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED));
 
         connector = new Bluetooth();
         connector.initialize(this, handler);
+        state = State.INIT;
+
+        View decorView = getWindow().getDecorView();
+        // Hide the status bar.
+        int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
+        decorView.setSystemUiVisibility(uiOptions);
 
         idle();
     }
@@ -193,12 +202,18 @@ public class MainActivity extends AppCompatActivity {
         Spinner spinner=(Spinner) findViewById(R.id.rule_dropdown);
         spinner.setSelection(0);
         EditText id=(EditText) findViewById(R.id.id);
+
+        Rule[] rule = {new NormalRule()};
+        String[] name = {"未命名"};
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 /**
-                 * TODO: position为0是 规则设置为南方规则，为1时，设置为北方规则未开发（默认设置为南方规则）
+                 * position为0是 规则设置为南方规则，为1时，设置为北方规则未开发（默认设置为南方规则）
                  */
+                if (position == 0) {
+                    rule[0] = new NormalRule();
+                }
             }
             @Override
             public void onNothingSelected(AdapterView<?> parent) {}
@@ -214,8 +229,9 @@ public class MainActivity extends AppCompatActivity {
             public void afterTextChanged(Editable s) {
                 String nickName=s.toString();
                 /**
-                 * TODO:将用户名（此处为主机玩家）设置为id
+                 * 将用户名（此处为主机玩家）设置为id
                  */
+                name[0] = nickName;
             }
         });
         imageButton.setOnClickListener(new View.OnClickListener() {
@@ -228,14 +244,21 @@ public class MainActivity extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setContentView(R.layout.game_ui);
                 /**
-                 * TODO:初始化游戏房间
+                 * 初始化游戏房间
                  */
+                player = new Player(connector.getBluetoothAdapter().getAddress(), name[0]);
+                connector.createRoom(MainActivity.this);
+                ArrayList<Player> players = new ArrayList<>();
+                GameRoom.createGameRoom(rule[0], 4, null, players);
+                GameRoom.getGameRoomInstance().addPlayer(player);
 
+                setContentView(R.layout.game_ui);
                 game();
             }
         });
+
+        state = State.SERVER_SETTING;
     }
 
     private void searchingRoom(){
@@ -273,7 +296,7 @@ public class MainActivity extends AppCompatActivity {
         //player1，玩家自身
         LinearLayout LinearLayout1=(LinearLayout) findViewById(R.id.layout_player1);
         LinearLayout targetLayout=(LinearLayout) findViewById(R.id.Target_ui);
-        int overlap=40;
+        int overlap=50;
         int liftDistance=40;
 
         for(int i=0;i<13;i++){

@@ -42,7 +42,7 @@ public class Bluetooth implements ConnectAdapter {
     }
 
     public void initialize(MainActivity activity, Handler handler) {
-        if (this.bluetoothAdapter != null) {
+        if (this.bluetoothAdapter == null) {
             this.bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
             if (this.bluetoothAdapter == null) {
                 Log.e("Bluetooth", "Device bluetooth hardware unsupported.");
@@ -96,8 +96,9 @@ public class Bluetooth implements ConnectAdapter {
         bluetoothAdapter.cancelDiscovery();
     }
 
-    public void createRoom() {
-
+    public void createRoom(MainActivity activity) {
+        open(activity);
+        enableVisibility(activity);
     }
 
     public void connectToRoom(int index) {

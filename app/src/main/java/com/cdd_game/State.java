@@ -1,6 +1,8 @@
 package com.cdd_game;
 
 public enum State {
+    INIT,
+    SERVER_SETTING,
     SERVER_WAITING,
     SERVER_PLAYING,
     CLIENT_WAITING,
