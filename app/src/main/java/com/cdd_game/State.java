@@ -1,0 +1,12 @@
+package com.cdd_game;
+
+public enum State {
+    SERVER_WAITING,
+    SERVER_PLAYING,
+    CLIENT_WAITING,
+    CLIENT_READY,
+    CLIENT_SCANNING_GAME_ROOM,
+    CLIENT_PLAYING,
+    SETTLEMENT
+}
+

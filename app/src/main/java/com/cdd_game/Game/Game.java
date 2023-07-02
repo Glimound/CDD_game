@@ -29,8 +29,7 @@ public class Game {
     private int gameTurn;
     private CardGroup lastCards;
 
-
-    private Game(String gameID,CardPool initialCards,CardPool discardCards,Rule rule ,Set<Player> players) {
+    private Game(String gameID, CardPool initialCards, CardPool discardCards, Rule rule , Set<Player> players) {
         this.gameID = gameID;
         this.initialCards = initialCards;
         this.discardCards = discardCards;
@@ -136,7 +135,6 @@ public class Game {
          */
     }
 
-
     /**
      * TODO: 涉及蓝牙连接
      * 切换至下一个玩家出牌，向玩家发送信息，并更改对应的state；应当由玩家的State实例调用（可通过Controller）。
@@ -177,6 +175,12 @@ public class Game {
         return rule.computeGameScore(remainingCards);
     }
 
+    public void addPlayer(Player player) {
+        players.add(player);
+        playerNum++;
+    }
+
+
     public Rule getRule(){
         return rule;
     }
@@ -197,6 +201,10 @@ public class Game {
         return players;
     }
 
+    public int getPlayerNum() {
+        return playerNum;
+    }
+
     public ArrayList<Player> getPlayerOrder() {
         return playerOrder;
     }
@@ -213,5 +221,13 @@ public class Game {
     }
     public CardGroup getLastCards(){
         return lastCards;
+    }
+
+    public void setRule(Rule rule) {
+        this.rule = rule;
+    }
+
+    public void setPlayers(Set<Player> players) {
+        this.players = players;
     }
 }
