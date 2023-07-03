@@ -5,9 +5,12 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
-import com.cdd_game.Message.MessageSchema;
+import com.cdd_game.Message.*;
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -45,7 +48,7 @@ public class ConnectedThread extends Thread {
     }
 
     public void run() {
-        mmBuffer = new byte[1024];
+        mmBuffer = new byte[4096];
         int numBytes; // bytes returned from read()
 
         // 持续监听
@@ -53,21 +56,22 @@ public class ConnectedThread extends Thread {
             try {
                 // 从InputStream中读取字节流，存至mmBuffer中
                 numBytes = mmInStream.read(mmBuffer);
+                if (!(numBytes == 0 || numBytes == -1)){
+                    // 将读取的字节流反序列化为json，再由json生成对象
+                    String json = "";
+                    try {
+                        json = new String(mmBuffer, "UTF-8").trim();
+                    } catch (UnsupportedEncodingException e) {
+                        Log.e("Bluetooth", "Deserialize failed", e);
+                    }
+                    JsonReader reader = new JsonReader(new StringReader(json));
+                    reader.setLenient(true);
+                    MessageSchema msg = typeCasting(reader, json);
 
-                // 将读取的字节流反序列化为json，再由json生成对象
-                String json = "";
-                try {
-                    json = new String(mmBuffer, "UTF-8").trim();
-                } catch (UnsupportedEncodingException e) {
-                    Log.e("Bluetooth", "Deserialize failed", e);
+                    // 将收到的消息对象发回主线程
+                    Message readMsg = mmHandler.obtainMessage(Bluetooth.MESSAGE_READ, msg);
+                    mmHandler.sendMessage(readMsg);
                 }
-                JsonReader reader = new JsonReader(new StringReader(json));
-                reader.setLenient(true);
-                MessageSchema msg = new Gson().fromJson(reader, MessageSchema.class);
-
-                // 将收到的消息对象发回主线程
-                Message readMsg = mmHandler.obtainMessage(Bluetooth.MESSAGE_READ, msg);
-                mmHandler.sendMessage(readMsg);
 
             } catch (IOException e) {
                 Log.e("Bluetooth", "Input stream was disconnected", e);
@@ -81,7 +85,8 @@ public class ConnectedThread extends Thread {
             // 将对象序列化为json，再由json生成字节流
             String json = new Gson().toJson(msg);
             try {
-                mmOutStream.write(json.getBytes("UTF-8"));
+                byte[] bytes = json.getBytes("UTF-8");
+                mmOutStream.write(bytes);
             } catch (UnsupportedEncodingException e) {
                 Log.e("Bluetooth", "Serialize failed", e);
             }
@@ -103,5 +108,31 @@ public class ConnectedThread extends Thread {
         } catch (IOException e) {
             Log.e("Bluetooth", "Could not close the connect socket", e);
         }
+    }
+
+    private MessageSchema typeCasting(JsonReader reader, String json) {
+        String behaviourType;
+        try {
+            JSONObject jsonObject = new JSONObject(json);
+            behaviourType = (String) jsonObject.get("behaviour");
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+
+        switch (behaviourType) {
+//            case PLAY_CARD:
+//                return new Gson().fromJson(reader, MsgPlayCard.class);
+//            case PASS:
+//                return new Gson().fromJson(reader, MsgPass.class);
+//            case WIN:
+//                return new Gson().fromJson(reader, MsgWin.class);
+            case "PLAYER_JOINED":
+                return new Gson().fromJson(reader, MsgPlayerJoined.class);
+            case "SHAKE_HAND":
+                return new Gson().fromJson(reader, MsgShakeHands.class);
+            case "READY":
+                return new Gson().fromJson(reader, MsgReady.class);
+        }
+        return null;
     }
 }

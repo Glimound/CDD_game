@@ -30,6 +30,8 @@ public interface ConnectAdapter {
 
     void createRoom(MainActivity activity);
 
+    void connectToRoom(int index);
+
     BluetoothAdapter getBluetoothAdapter();
 
     BluetoothServerSocket getServerSocket();

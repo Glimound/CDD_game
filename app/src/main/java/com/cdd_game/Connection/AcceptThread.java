@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 
 import java.io.IOException;
@@ -16,7 +17,7 @@ public class AcceptThread extends Thread {
     private final BluetoothServerSocket mmServerSocket;
     private final Bluetooth mmBluetooth;
     private final Handler mmHandler;
-    private HashMap<String, ConnectedThread> mmConnectedThreads;  // TODO:不是连接池 待实现连接池
+    private ConnectedThread mmConnectedThread;
 
 
     @SuppressLint("MissingPermission")
@@ -64,12 +65,12 @@ public class AcceptThread extends Thread {
     }
 
     public void manageConnectedSocket(BluetoothSocket mmSocket) {
-        ConnectedThread thread = new ConnectedThread(mmSocket, mmHandler);
-        thread.start();
-        if (mmConnectedThreads.size() < 7) {    // 蓝牙api限制最大同时连接数为7
-            mmConnectedThreads.put(mmSocket.getRemoteDevice().getAddress(), thread);    // 是否可以用socket池？而非线程池？
-            mmBluetooth.setConnectedThreadsOfServer(mmConnectedThreads);
-            mmHandler.sendEmptyMessage(Bluetooth.GOT_A_CLIENT);
+        mmConnectedThread = new ConnectedThread(mmSocket, mmHandler);
+        if (mmBluetooth.getConnectedThreadsOfServer().size() < 7) {    // 蓝牙api限制最大同时连接数为7
+            mmBluetooth.getConnectedThreadsOfServer().put(mmSocket.getRemoteDevice().getAddress(), mmConnectedThread);    // 是否可以用socket池？而非线程池？
+            mmConnectedThread.start();
+            Message msg = mmHandler.obtainMessage(Bluetooth.GOT_A_CLIENT, mmSocket.getRemoteDevice().getAddress());
+            mmHandler.sendMessage(msg);
         } else {
             Log.e("Bluetooth", "Concurrent connections reach limit.");
         }
