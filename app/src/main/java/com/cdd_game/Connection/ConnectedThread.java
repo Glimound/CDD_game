@@ -132,6 +132,8 @@ public class ConnectedThread extends Thread {
                 return new Gson().fromJson(reader, MsgShakeHands.class);
             case "READY":
                 return new Gson().fromJson(reader, MsgReady.class);
+            case "GAME_START":
+                return new Gson().fromJson(reader, MsgGameStart.class);
         }
         return null;
     }

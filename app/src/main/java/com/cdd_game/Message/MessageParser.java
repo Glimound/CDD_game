@@ -87,6 +87,17 @@ public class MessageParser {
                     // TODO: 更新UI，显示该玩家的已准备状态
                 }
                 break;
+
+            case GAME_START:
+                MsgGameStart tmpMsg4 = (MsgGameStart) msg;
+                if (activity.state == State.CLIENT_READY) {
+                    GameRoom.getGameRoomInstance().createGame(tmpMsg4.gameID);
+                    Game.getGameInstance().setPlayers(tmpMsg4.players);
+                    activity.state = State.CLIENT_PLAYING;
+                    activity.setContentView(R.layout.game_ui);
+                    activity.game();
+                }
+                break;
         }
     }
 }
