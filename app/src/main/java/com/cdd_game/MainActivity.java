@@ -411,6 +411,17 @@ public class MainActivity extends AppCompatActivity {
                     }
                     num1++;
                 }
+                for(int i=0;i<count;i++){
+                    ImageButton child=(ImageButton) LinearLayout1.getChildAt(i);
+                    LinearLayout.LayoutParams layoutParams=(LinearLayout.LayoutParams)child.getLayoutParams();
+                    if(i>0){
+                        layoutParams.leftMargin = -overlap; // 设置水平偏移量
+                    }else
+                    {
+                        layoutParams.leftMargin = 0;
+                    }
+                }
+
                 if(tempMap.size()==count){
                     imageMap.putAll(tempMap);
                 }
