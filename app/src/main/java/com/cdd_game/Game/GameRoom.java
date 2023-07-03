@@ -24,8 +24,16 @@ public class GameRoom {
     private Player winner;
 
 
-    public GameRoom() {
+    private GameRoom(Rule rule, int playerNumLimit, Player winner, ArrayList<Player> players) {
+        this.rule = rule;
+        this.players = players;
+        this.playerNumLimit = playerNumLimit;
+        this.winner = winner;
+    }
 
+    public static void createGameRoom(Rule rule, int playerNumLimit, Player winner, ArrayList<Player> players) {
+        if (gameRoomInstance == null)
+            gameRoomInstance = new GameRoom(rule, playerNumLimit, winner, players);
     }
 
     public static GameRoom getGameRoomInstance() {
@@ -50,6 +58,10 @@ public class GameRoom {
      */
     public void addPlayer(String deviceID, String nickName) {   // 以及称号等
         Player player = new Player(deviceID, nickName);
+        players.add(player);
+    }
+
+    public void addPlayer(Player player) {
         players.add(player);
     }
 

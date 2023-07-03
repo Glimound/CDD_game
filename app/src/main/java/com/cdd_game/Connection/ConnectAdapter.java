@@ -28,6 +28,8 @@ public interface ConnectAdapter {
 
     void stopScanning();
 
+    void createRoom(MainActivity activity);
+
     BluetoothAdapter getBluetoothAdapter();
 
     BluetoothServerSocket getServerSocket();
