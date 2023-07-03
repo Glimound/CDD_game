@@ -30,6 +30,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.provider.Settings;
 import android.text.Editable;
+import android.text.StaticLayout;
 import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -44,6 +45,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -78,6 +80,15 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<String>itemList=new ArrayList<>();
     ArrayAdapter<String> adapter;
 
+    public ImageView imageA;
+    public ImageView imageB;
+    public ImageView imageC;
+    public ImageView imageD;
+
+    public ImageView imageA1;
+    public ImageView imageB1;
+    public ImageView imageC1;
+    public ImageView imageD1;
     private Handler handler = new Handler(Looper.myLooper()) {
         @Override
         public void handleMessage(@NonNull Message msg) {
@@ -89,7 +100,6 @@ public class MainActivity extends AppCompatActivity {
                     MessageSchema newMsg = new MsgShakeHands(Calendar.getInstance().getTimeInMillis(),
                             player.getDeviceID(), player.getNickName(), null, null, 0, null);
                     connector.getConnectedThreadOfClient().write(newMsg);
-                    // TODO: 在此处切换ui，进入游戏房间等待界面（应为握手后）
                     break;
 
                 case Bluetooth.GOT_A_CLIENT:    // 服务器连接上客户端
@@ -206,6 +216,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void settingRoom(){
+
+
         state = State.SERVER_SETTING;
         ImageButton imageButton= (ImageButton) this.findViewById(R.id.imageButton);
         Button button=(Button)this.findViewById(R.id.button);
@@ -258,11 +270,14 @@ public class MainActivity extends AppCompatActivity {
                 /**
                  * 初始化游戏房间
                  */
+
                 player = new Player(connector.getBluetoothAdapter().getAddress(), name[0]);
                 connector.createRoom(MainActivity.this);
                 ArrayList<Player> players = new ArrayList<>();
                 GameRoom.createGameRoom(rule[0], 4, null, players);
                 GameRoom.getGameRoomInstance().addPlayer(player);
+
+
 
                 state=State.SERVER_WAITING;
                 setContentView(R.layout.waiting1);
@@ -285,10 +300,10 @@ public class MainActivity extends AppCompatActivity {
                 /**
                  *  position为点击项的索引
                  */
-
                 player = new Player(connector.getBluetoothAdapter().getAddress(), name[0]);
                 connector.connectToRoom(position);
                 // TODO: 进度条
+
 
 //                state=State.CLIENT_WAITING;
 //                setContentView(R.layout.waiting1);
@@ -303,6 +318,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 connector.getDevices().clear();
                 itemList.clear();
+
                 setContentView(R.layout.activity_main);
                 idle();
             }
@@ -327,6 +343,18 @@ public class MainActivity extends AppCompatActivity {
 
     public void waiting(){
         Button button=this.findViewById(R.id.readyOrStar);
+        imageA=this.findViewById(R.id.a);
+        imageB=this.findViewById(R.id.b);
+        imageC=this.findViewById(R.id.c);
+        imageD=this.findViewById(R.id.d);
+
+        imageA1=this.findViewById(R.id.a1);
+        imageB1=this.findViewById(R.id.b1);
+        imageC1=this.findViewById(R.id.c1);
+        imageD1=this.findViewById(R.id.d1);
+        if(state==State.SERVER_WAITING){
+            imageA.setVisibility(View.VISIBLE);
+        }
         /**
          * 根据状态的不同设置按钮有不同的文本以及不同的动作
          */
@@ -345,6 +373,11 @@ public class MainActivity extends AppCompatActivity {
                     // TODO: 屏蔽该button
 
                     button.setText("等待游戏开始");
+                    button.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                        }
+                    });
                 }
             });
         }else if(state==State.SERVER_WAITING){
