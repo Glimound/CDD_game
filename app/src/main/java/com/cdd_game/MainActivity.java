@@ -28,6 +28,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Gravity;
@@ -57,10 +58,7 @@ import java.util.List;
 import com.cdd_game.Message.BehaviourType;
 import com.cdd_game.Connection.Bluetooth;
 import com.cdd_game.Connection.ConnectAdapter;
-import com.cdd_game.Message.MessageParser;
-import com.cdd_game.Message.MessageSchema;
-import com.cdd_game.Game.GameRoom;
-import com.cdd_game.Message.MsgShakeHands;
+import com.cdd_game.Message.*;
 import com.cdd_game.Player.Player;
 import com.cdd_game.Rule.NormalRule;
 import com.cdd_game.Rule.Rule;
@@ -76,6 +74,9 @@ public class MainActivity extends AppCompatActivity {
     public State state;
     private MessageParser messageParser = new MessageParser(this);
     private HashMap<Player, BluetoothSocket> socketMapping;
+    public String tmpMAC;
+    ArrayList<String>itemList=new ArrayList<>();
+    ArrayAdapter<String> adapter;
 
     private Handler handler = new Handler(Looper.myLooper()) {
         @Override
@@ -84,16 +85,18 @@ public class MainActivity extends AppCompatActivity {
 
             switch (msg.what) {
                 case Bluetooth.CONNECTED_TO_SERVER: // 客户端连接上服务器，触发该分支，进入房间
-                    connector.stopScanning();
-                    connector.getConnectThread().cancel();
+                    //connector.getConnectThread().cancel();
                     MessageSchema newMsg = new MsgShakeHands(Calendar.getInstance().getTimeInMillis(),
-                            player.getDeviceID(), player.getNickName(), null, null);
+                            player.getDeviceID(), player.getNickName(), null, null, 0, null);
                     connector.getConnectedThreadOfClient().write(newMsg);
                     // TODO: 在此处切换ui，进入游戏房间等待界面（应为握手后）
                     break;
-                case Bluetooth.GOT_A_CLIENT:    // 服务器连接上客户端
 
+                case Bluetooth.GOT_A_CLIENT:    // 服务器连接上客户端
+                    // 临时储存该客户端的MAC地址，握手时修改MAC-线程映射为nickName-线程映射
+                    tmpMAC = (String) msg.obj;
                     break;
+
                 case Bluetooth.MESSAGE_READ:    // 接收到socket传来的msg
                     messageParser.parseMessage((MessageSchema) msg.obj);
                     break;
@@ -134,7 +137,9 @@ public class MainActivity extends AppCompatActivity {
                         @SuppressLint("MissingPermission") String deviceName = device.getName();
                         String deviceID = device.getAddress();
 
-                        // 广播，修改ui（自定义intent）
+                        // 修改ui
+                        itemList.add(deviceName + " | " + deviceID);
+                        adapter.notifyDataSetChanged();
                     }
                     break;
             }
@@ -153,6 +158,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, itemList);
         setContentView(R.layout.activity_main);
         checkPermission();
 
@@ -179,6 +185,7 @@ public class MainActivity extends AppCompatActivity {
     private FuncOfActivity func=new FuncOfActivity();
 
     private void idle(){
+        state = State.INIT;
         Button button1=(Button)this.findViewById(R.id.button1);//创建房间
         Button button2=(Button)this.findViewById(R.id.button2);  //加入房间
 
@@ -240,6 +247,7 @@ public class MainActivity extends AppCompatActivity {
         imageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                name[0] = "未命名";
                 setContentView(R.layout.activity_main);
                 idle();
             }
@@ -265,11 +273,11 @@ public class MainActivity extends AppCompatActivity {
 
     private void searchingRoom(){
         state=State.CLIENT_SCANNING_GAME_ROOM;
+        connector.startScanning();  // 开始扫描设备
         ListView listView=this.findViewById(R.id.bt_device_list);
-        ArrayList<String>itemList=new ArrayList<>();
-        itemList.add("no1");
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, itemList);
         listView.setAdapter(adapter);
+
+        String[] name = {"未命名"};
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -277,20 +285,29 @@ public class MainActivity extends AppCompatActivity {
                 /**
                  *  position为点击项的索引
                  */
-                state=State.CLIENT_WAITING;
-                setContentView(R.layout.waiting1);
-                waiting();
+
+                player = new Player(connector.getBluetoothAdapter().getAddress(), name[0]);
+                connector.connectToRoom(position);
+                // TODO: 进度条
+
+//                state=State.CLIENT_WAITING;
+//                setContentView(R.layout.waiting1);
+//                waiting();
             }
         });
+
         ImageButton imageButton= (ImageButton) this.findViewById(R.id.imageButton_exit);
         EditText id=(EditText) findViewById(R.id.ClientId);
         imageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                connector.getDevices().clear();
+                itemList.clear();
                 setContentView(R.layout.activity_main);
                 idle();
             }
         });
+
         id.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -301,16 +318,17 @@ public class MainActivity extends AppCompatActivity {
             public void afterTextChanged(Editable s) {
                 String nickName=s.toString();
                 /**
-                 * TODO:将用户名（此处为加入房间玩家）设置为id
+                 * 将用户名（此处为加入房间玩家）设置为id
                  */
+                name[0] = nickName;
             }
         });
     }
 
-    private void waiting(){
+    public void waiting(){
         Button button=this.findViewById(R.id.readyOrStar);
         /**
-         * TODO:根据状态的不同设置按钮有不同的文本以及不同的动作
+         * 根据状态的不同设置按钮有不同的文本以及不同的动作
          */
         if(state==State.CLIENT_WAITING){
             button.setText("准备");
@@ -318,6 +336,14 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v){
                     state=State.CLIENT_READY;
+                    // 设置自身的准备状态，并发送消息至服务器
+                    player.setReady(true);
+                    GameRoom.getGameRoomInstance().getPlayerByNickName(player.getNickName()).setReady(true);
+                    MessageSchema msg = new MsgReady(Calendar.getInstance().getTimeInMillis(),
+                            player.getDeviceID(), player.getNickName());
+                    connector.getConnectedThreadOfClient().write(msg);
+                    // TODO: 屏蔽该button
+
                     button.setText("等待游戏开始");
                 }
             });
@@ -326,9 +352,26 @@ public class MainActivity extends AppCompatActivity {
             button.setOnClickListener(new View.OnClickListener(){
                 @Override
                 public void onClick(View v){
-                    state=State.SERVER_PLAYING;
-                    setContentView(R.layout.game_ui);
-                    game();
+                    int readyPlayerNum = 0;
+                    if (!GameRoom.getGameRoomInstance().getPlayers().isEmpty()) {
+                        for (Player player : GameRoom.getGameRoomInstance().getPlayers()) {
+                            if (player.isReady())
+                                readyPlayerNum++;
+                        }
+                    }
+
+                    if (readyPlayerNum == GameRoom.getGameRoomInstance().getPlayerNumLimit() - 1) {
+
+                        // TODO: 开始游戏流程
+                        // 生成gameID
+                        // 新建游戏实例 initialize()
+
+                        state=State.SERVER_PLAYING;
+                        setContentView(R.layout.game_ui);
+                        game();
+                    } else {
+                        readyPlayerNum = 0;
+                    }
                 }
             });
         }
