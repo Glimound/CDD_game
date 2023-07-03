@@ -422,6 +422,12 @@ public class MainActivity extends AppCompatActivity {
 
 
                         LinearLayout1.removeView(child);
+                        child.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+
+                            }
+                        });
                         targetLayout.addView(child);
                         i--;
                         count--;
