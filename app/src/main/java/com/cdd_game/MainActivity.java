@@ -423,6 +423,7 @@ public class MainActivity extends AppCompatActivity {
                         for (Player player : gameRoom.getPlayers()) {
                             if (!player.getNickName().equals(player.getNickName())) {
                                 connector.getConnectedThreadsOfServer().get(player.getNickName()).write(msg);
+                                Log.d("Message", "Server sent start game message to " + player.getNickName() + ".");
                             }
                         }
                         state=State.SERVER_PLAYING;
@@ -552,10 +553,12 @@ public class MainActivity extends AppCompatActivity {
                         player.getDeviceID(), player.getNickName());
                 if (state == State.CLIENT_PLAYING) {
                     connector.getConnectedThreadOfClient().write(msg);
+                    Log.d("Message", "Client sent next turn message to server.");
                 } else if (state == State.SERVER_PLAYING) {
                     for (Player player : Game.getGameInstance().getPlayers()) {
                         if (!player.getNickName().equals(player.getNickName())) {
                             connector.getConnectedThreadsOfServer().get(player.getNickName()).write(msg);
+                            Log.d("Message", "Server sent next turn message to " + player.getNickName() + ".");
                         }
                     }
                 }
@@ -625,10 +628,15 @@ public class MainActivity extends AppCompatActivity {
                             player.getDeviceID(), player.getNickName(), cardGroup);
                     if (state == State.CLIENT_PLAYING) {
                         connector.getConnectedThreadOfClient().write(msg);
+                        Log.d("Message", "Client sent play card message to server." + "\n\tPlayer: "
+                                + player.getNickName() + "\n\tCards: " + cardGroup.toString());
                     } else if (state == State.SERVER_PLAYING) {
                         for (Player player : Game.getGameInstance().getPlayers()) {
                             if (!player.getNickName().equals(player.getNickName())) {
                                 connector.getConnectedThreadsOfServer().get(player.getNickName()).write(msg);
+                                Log.d("Message", "Server sent play card message to "
+                                        + player.getNickName() + ".\n\tPlayer: " + player.getNickName()
+                                        + "\n\tCards: " + cardGroup.toString());
                             }
                         }
                     }
