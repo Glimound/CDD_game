@@ -262,6 +262,26 @@ public class MainActivity extends AppCompatActivity {
                  * 将用户名（此处为主机玩家）设置为id
                  */
                 name[0] = nickName;
+                button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        /**
+                         * 初始化游戏房间
+                         */
+
+                        player = new Player(connector.getBluetoothAdapter().getAddress(), name[0]);
+                        connector.createRoom(MainActivity.this);
+                        ArrayList<Player> players = new ArrayList<>();
+                        GameRoom.createGameRoom(rule[0], 4, null, players);
+                        GameRoom.getGameRoomInstance().addPlayer(player);
+
+
+
+                        state=State.SERVER_WAITING;
+                        setContentView(R.layout.waiting1);
+                        waiting();
+                    }
+                });
             }
         });
         imageButton.setOnClickListener(new View.OnClickListener() {
@@ -275,21 +295,7 @@ public class MainActivity extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                /**
-                 * 初始化游戏房间
-                 */
 
-                player = new Player(connector.getBluetoothAdapter().getAddress(), name[0]);
-                connector.createRoom(MainActivity.this);
-                ArrayList<Player> players = new ArrayList<>();
-                GameRoom.createGameRoom(rule[0], 4, null, players);
-                GameRoom.getGameRoomInstance().addPlayer(player);
-
-
-
-                state=State.SERVER_WAITING;
-                setContentView(R.layout.waiting1);
-                waiting();
             }
         });
     }
@@ -378,6 +384,7 @@ public class MainActivity extends AppCompatActivity {
                     MessageSchema msg = new MsgReady(Calendar.getInstance().getTimeInMillis(),
                             player.getDeviceID(), player.getNickName());
                     connector.getConnectedThreadOfClient().write(msg);
+                    imageA.setVisibility(View.VISIBLE);
                     // TODO: 屏蔽该button
 
                     button.setText("等待游戏开始");
@@ -429,10 +436,43 @@ public class MainActivity extends AppCompatActivity {
             });
         }
     }
+
+    /**
+     * 其他玩家出牌（cards），更新ui
+     * @param cards
+     */
+    public void showCardsUsed(CardGroup cards){
+
+        LinearLayout targetLayout=(LinearLayout) findViewById(R.id.Target_ui);
+
+        targetLayout.removeAllViews();
+        int overlap=45;
+        for(int i=0;i< cards.size();i++){
+            ImageButton imageButton=new ImageButton(this);
+            imageButton.setLayoutParams(new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT));
+            String suit=cards.getCards().get(i).getSuit().getName();
+            String rank=cards.getCards().get(i).getRank().getName();
+            int resId=func.getDrawableId(this,suit.toLowerCase(),rank);
+
+            imageButton.setImageResource(resId);
+
+            imageButton.setBackground(new ColorDrawable(Color.TRANSPARENT));
+            LinearLayout.LayoutParams layoutParams=(LinearLayout.LayoutParams)imageButton.getLayoutParams();
+            if(i>0){
+                layoutParams.leftMargin = -overlap; // 设置水平偏移量
+            }
+            targetLayout.addView(imageButton);
+        }
+
+    }
+
     public void game(){
 
         HashMap<Integer,String>imageMap=new HashMap<>();
 
+        ImageButton imageButton2=(ImageButton) findViewById(R.id.imageButton2);
         ImageButton imageButton3=(ImageButton) findViewById(R.id.imageButton3);
         ImageView imageView2=(ImageView) findViewById(R.id.cards2);
         //player1，玩家自身
@@ -495,6 +535,14 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
         }
+        imageButton2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                /**
+                 * TODO:点击不要
+                 */
+            }
+        });
         imageButton3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -505,6 +553,7 @@ public class MainActivity extends AppCompatActivity {
                 int num=0;
                 int num1=0;
                 int count=LinearLayout1.getChildCount();
+                ArrayList<ImageButton> children=new ArrayList<>();
 
                 HashMap<Integer,String>tempMap=new HashMap<>();
 
@@ -520,21 +569,14 @@ public class MainActivity extends AppCompatActivity {
                         /**
                          * 通过for循环玩家所出的牌
                          */
+                        children.add(child);
                         String tempCardName=imageMap.get(num1);
                         int index=tempCardName.indexOf("_");
                         String cardSuit=tempCardName.substring(0,index).toUpperCase();
                         String cardRank=tempCardName.substring(index+1,tempCardName.length()).toUpperCase();
+                        children.add(child);
 
-
-                        LinearLayout1.removeView(child);
-                        child.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-
-                            }
-                        });
-                        targetLayout.addView(child);
-                        i--;
+                        //i--;
                         count--;
 
 
@@ -544,22 +586,38 @@ public class MainActivity extends AppCompatActivity {
                     }
                     num1++;
                 }
+                /**
+                 *
+                 *TODO:判断是否移除 true为条件
+                 */
+                if(true){
+                    for(int i=0;i< children.size();i++){
+                        LinearLayout1.removeView(children.get(i));
+                        children.get(i).setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
 
+                            }
+                        });
+                        targetLayout.addView(children.get(i));
+                    }
+                    for(int i=0;i<count;i++){
+                        ImageButton child=(ImageButton) LinearLayout1.getChildAt(i);
+                        LinearLayout.LayoutParams layoutParams=(LinearLayout.LayoutParams)child.getLayoutParams();
+                        if(i>0){
+                            layoutParams.leftMargin = -overlap; // 设置水平偏移量
+                        }else
+                        {
+                            layoutParams.leftMargin = 0;
+                        }
+                    }
 
-                for(int i=0;i<count;i++){
-                    ImageButton child=(ImageButton) LinearLayout1.getChildAt(i);
-                    LinearLayout.LayoutParams layoutParams=(LinearLayout.LayoutParams)child.getLayoutParams();
-                    if(i>0){
-                        layoutParams.leftMargin = -overlap; // 设置水平偏移量
-                    }else
-                    {
-                        layoutParams.leftMargin = 0;
+                    if(tempMap.size()==count){
+                        imageMap.putAll(tempMap);
                     }
                 }
 
-                if(tempMap.size()==count){
-                    imageMap.putAll(tempMap);
-                }
+
                 LinearLayout1.setGravity(View.TEXT_ALIGNMENT_CENTER);
 
                 /**

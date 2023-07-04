@@ -56,10 +56,13 @@ public class MessageParser {
                     switch(num){
                         case 1:
                             activity.imageB1.setVisibility(View.VISIBLE);
+                            break;
                         case 2:
                             activity.imageC1.setVisibility(View.VISIBLE);
+                            break;
                         case 3:
                             activity.imageD1.setVisibility(View.VISIBLE);
+                            break;
                     }
 
 
@@ -77,13 +80,19 @@ public class MessageParser {
                     switch(num){
                         case 1:
                             activity.imageD1.setVisibility(View.VISIBLE);
+                            activity.imageD.setVisibility(View.VISIBLE);
+                            break;
                         case 2:
                             activity.imageD1.setVisibility(View.VISIBLE);
                             activity.imageC1.setVisibility(View.VISIBLE);
+                            activity.imageC.setVisibility(View.VISIBLE);
+                            break;
                         case 3:
                             activity.imageB1.setVisibility(View.VISIBLE);
                             activity.imageD1.setVisibility(View.VISIBLE);
                             activity.imageC1.setVisibility(View.VISIBLE);
+                            activity.imageB.setVisibility(View.VISIBLE);
+                            break;
                     }
                     // TODO: 更新UI，显示房间内已有的玩家
                 }
@@ -102,10 +111,13 @@ public class MessageParser {
                     switch(offset){
                         case 1:
                             activity.imageB1.setVisibility(View.VISIBLE);
+                            break;
                         case 2:
                             activity.imageC1.setVisibility(View.VISIBLE);
+                            break;
                         case 3:
                             activity.imageD1.setVisibility(View.VISIBLE);
+                            break;
                     }
                 }
                 break;
@@ -123,10 +135,13 @@ public class MessageParser {
                     switch(offset){
                         case 1:
                             activity.imageB.setVisibility(View.VISIBLE);
+                            break;
                         case 2:
                             activity.imageC.setVisibility(View.VISIBLE);
+                            break;
                         case 3:
                             activity.imageD.setVisibility(View.VISIBLE);
+                            break;
                     }
 
                     for (Player player : GameRoom.getGameRoomInstance().getPlayers()) {
@@ -146,16 +161,22 @@ public class MessageParser {
                     switch(offset){
                         case 1:
                             activity.imageB.setVisibility(View.VISIBLE);
+                            break;
                         case 2:
                             activity.imageC.setVisibility(View.VISIBLE);
+                            break;
                         case 3:
                             activity.imageD.setVisibility(View.VISIBLE);
+                            break;
                         case -1:
                             activity.imageD.setVisibility(View.VISIBLE);
+                            break;
                         case -2:
                             activity.imageC.setVisibility(View.VISIBLE);
+                            break;
                         case -3:
                             activity.imageB.setVisibility(View.VISIBLE);
+                            break;
                     }
                 }
                 break;
