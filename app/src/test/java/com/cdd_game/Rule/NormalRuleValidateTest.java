@@ -30,6 +30,14 @@ public class NormalRuleValidateTest {
     }
 
     @Test
+    public void empty() throws Exception {
+        CardGroup empty = create();
+        assertFalse(rule.validate(empty));
+        assertEquals(empty.getCardGroupType(), CardGroupType.UNKNOWN);
+    }
+
+
+    @Test
     public void single() throws Exception {
         CardGroup dA = create();
         dA.addCard(get(CardSuit.DIAMOND, CardRank.Card_A));

@@ -120,12 +120,10 @@ public class ConnectedThread extends Thread {
         }
 
         switch (behaviourType) {
-//            case PLAY_CARD:
-//                return new Gson().fromJson(reader, MsgPlayCard.class);
-//            case PASS:
-//                return new Gson().fromJson(reader, MsgPass.class);
-//            case WIN:
-//                return new Gson().fromJson(reader, MsgWin.class);
+            case "PLAY_CARD":
+                return new Gson().fromJson(reader, MsgPlayCard.class);
+            case "NEXT_TURN":
+                return new Gson().fromJson(reader, MsgNextTurn.class);
             case "PLAYER_JOINED":
                 return new Gson().fromJson(reader, MsgPlayerJoined.class);
             case "SHAKE_HAND":
@@ -134,6 +132,8 @@ public class ConnectedThread extends Thread {
                 return new Gson().fromJson(reader, MsgReady.class);
             case "GAME_START":
                 return new Gson().fromJson(reader, MsgGameStart.class);
+            case "GAME_END":
+                return new Gson().fromJson(reader, MsgGameEnd.class);
         }
         return null;
     }

@@ -441,7 +441,7 @@ public class MainActivity extends AppCompatActivity {
      * 其他玩家出牌（cards），更新ui
      * @param cards
      */
-    public void showCardsUsed(CardGroup cards){
+    public void showCardsUsed(String nickName, CardGroup cards){
 
         LinearLayout targetLayout=(LinearLayout) findViewById(R.id.Target_ui);
 
@@ -480,6 +480,13 @@ public class MainActivity extends AppCompatActivity {
         LinearLayout targetLayout=(LinearLayout) findViewById(R.id.Target_ui);
         int overlap=45;
         int liftDistance=40;
+
+        String nickNameOfPlayerToPlayCards = Game.getGameInstance().getPlayerToPlayCard().getNickName();
+        if (!nickNameOfPlayerToPlayCards.equals(player.getNickName())) {
+            // 若第一个出牌的人不为自己
+            // TODO: 隐藏自己的出牌按钮和跳过按钮
+        }
+        // TODO: 显示轮到的玩家
 
         for(int i=0;i<13;i++){
             ImageButton imageButton=new ImageButton(this);
@@ -539,8 +546,19 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 /**
-                 * TODO:点击不要
+                 * 点击不要
                  */
+                MessageSchema msg = new MsgNextTurn(Calendar.getInstance().getTimeInMillis(),
+                        player.getDeviceID(), player.getNickName());
+                if (state == State.CLIENT_PLAYING) {
+                    connector.getConnectedThreadOfClient().write(msg);
+                } else if (state == State.SERVER_PLAYING) {
+                    for (Player player : Game.getGameInstance().getPlayers()) {
+                        if (!player.getNickName().equals(player.getNickName())) {
+                            connector.getConnectedThreadsOfServer().get(player.getNickName()).write(msg);
+                        }
+                    }
+                }
             }
         });
         imageButton3.setOnClickListener(new View.OnClickListener() {
@@ -554,11 +572,10 @@ public class MainActivity extends AppCompatActivity {
                 int num1=0;
                 int count=LinearLayout1.getChildCount();
                 ArrayList<ImageButton> children=new ArrayList<>();
-
                 HashMap<Integer,String>tempMap=new HashMap<>();
 
-                CardGroup cardGroup;
                 // 创建空卡组
+                CardGroup cardGroup;
                 try {
                     cardGroup = new CardPoolFactory().createCardGroup(CardGroupType.UNKNOWN);
                 } catch (Exception e) {
@@ -566,6 +583,7 @@ public class MainActivity extends AppCompatActivity {
                     throw new RuntimeException(e);
                 }
 
+                Game game = Game.getGameInstance();
                 for(int i=0;i<LinearLayout1.getChildCount();i++){
                     ImageButton child=(ImageButton) LinearLayout1.getChildAt(i);
                     if(child.getTranslationY()!=0){
@@ -573,19 +591,16 @@ public class MainActivity extends AppCompatActivity {
                          * 通过for循环玩家所出的牌
                          */
                         children.add(child);
+
                         String tempCardName=imageMap.get(num1);
                         int index=tempCardName.indexOf("_");
                         String cardSuit=tempCardName.substring(0,index).toUpperCase();
-                        String cardRank=tempCardName.substring(index+1,tempCardName.length()).toUpperCase();
-                        children.add(child);
-//                        String cardRank=tempCardName.substring(index+1).toUpperCase();
-//                        Card card = Game.getGameInstance().getPlayerByNickName(player.getNickName())
-//                                .getOwnCards().getCardBySuitAndRank(cardSuit, cardRank);
-//                        cardGroup.addCard(card);
+                        String cardRank=tempCardName.substring(index+1).toUpperCase();
+                        Card card = game.getPlayerByNickName(player.getNickName()).getOwnCards()
+                                .getCardBySuitAndRank(cardSuit, cardRank);
+                        cardGroup.addCard(card);
 
-                        //i--;
                         count--;
-
 
                     }else{
                         tempMap.put(num,imageMap.get(num1));
@@ -593,11 +608,32 @@ public class MainActivity extends AppCompatActivity {
                     }
                     num1++;
                 }
+
+                boolean isValid = game.getRule().validate(cardGroup);
+                boolean isBigger;
+                if (game.getPreviousCards() == null)
+                    isBigger = true;
+                else
+                    isBigger = game.getRule().compareToCards(game.getPreviousCards(), cardGroup);
+
                 /**
-                 *
-                 *TODO:判断是否移除 true为条件
+                 * 如果牌型正确且比上家大
                  */
-                if(true){
+                if (isValid && isBigger) {
+                    // 发送消息给服务器（客户端）
+                    MessageSchema msg = new MsgPlayCard(Calendar.getInstance().getTimeInMillis(),
+                            player.getDeviceID(), player.getNickName(), cardGroup);
+                    if (state == State.CLIENT_PLAYING) {
+                        connector.getConnectedThreadOfClient().write(msg);
+                    } else if (state == State.SERVER_PLAYING) {
+                        for (Player player : Game.getGameInstance().getPlayers()) {
+                            if (!player.getNickName().equals(player.getNickName())) {
+                                connector.getConnectedThreadsOfServer().get(player.getNickName()).write(msg);
+                            }
+                        }
+                    }
+
+                    // 更新UI
                     for(int i=0;i< children.size();i++){
                         LinearLayout1.removeView(children.get(i));
                         children.get(i).setOnClickListener(new View.OnClickListener() {
@@ -622,15 +658,22 @@ public class MainActivity extends AppCompatActivity {
                     if(tempMap.size()==count){
                         imageMap.putAll(tempMap);
                     }
+
+                    game.getPlayerByNickName(player.getNickName()).getOwnCards().removeCards(cardGroup);
+                    /** TODO: 更新UI中自己牌的张数
+                     * 其余玩家牌变少，仅为测试用，后续需修改
+                     * imageView2.setImageResource(func.getDrawableId(MainActivity.this,num));其中num为剩下牌的数量
+                     */
+
+                } else {
+                    showToast("牌型不符合规则");
+                    // TODO: 更新UI，显示牌型不符合规则
                 }
 
 
                 LinearLayout1.setGravity(View.TEXT_ALIGNMENT_CENTER);
 
-                /**
-                 * 其余玩家牌变少，仅为测试用，后续需修改
-                 * imageView2.setImageResource(func.getDrawableId(MainActivity.this,num));其中num为剩下牌的数量
-                 */
+
             }
 
         });
