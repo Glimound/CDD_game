@@ -33,23 +33,30 @@ import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.cdd_game.Chat.ChatAdapter;
+import com.cdd_game.Chat.ChatData;
 import com.cdd_game.Game.GameRoom;
 
 import java.lang.annotation.Target;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import com.cdd_game.Message.BehaviourType;
 import com.cdd_game.Connection.Bluetooth;
@@ -58,6 +65,7 @@ import com.cdd_game.Message.MessageSchema;
 import com.cdd_game.Game.GameRoom;
 import com.cdd_game.Message.MsgShakeHands;
 import com.cdd_game.Player.Player;
+import com.google.gson.internal.bind.ReflectiveTypeAdapterFactory;
 
 import java.util.Calendar;
 import java.util.HashMap;
@@ -69,6 +77,8 @@ public class MainActivity extends AppCompatActivity {
     private Toast toast = null;
     public State state;
     private HashMap<Player, BluetoothSocket> socketMapping;
+    ChatAdapter chatAdapter=new ChatAdapter();
+    LinkedList<ChatData> chatList=new LinkedList<>();
 
     private Handler handler = new Handler(Looper.myLooper()) {
         @Override
@@ -270,6 +280,44 @@ public class MainActivity extends AppCompatActivity {
 
         ImageButton imageButton3=(ImageButton) findViewById(R.id.imageButton3);
         ImageView imageView2=(ImageView) findViewById(R.id.cards2);
+
+        /**
+         * 消息按钮，离开按钮，聊天框的布局文件
+         *
+          */
+        ImageButton messageButton = findViewById(R.id.messageButton);
+        ImageButton exitButton=findViewById(R.id.exit);
+        Button sendButton=findViewById(R.id.send_button);
+        LinearLayout dialogBox = findViewById(R.id.dialog_box);
+        ListView listView=findViewById(R.id.chatContent);
+        String inputMessage=findViewById(R.id.input_message).toString();
+        // 设置点击监听器
+        messageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+               //显示聊天框
+                    dialogBox.setVisibility(View.VISIBLE);
+                    messageButton.setVisibility(View.GONE);
+                }
+        });
+        exitButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialogBox.setVisibility(View.GONE);
+                messageButton.setVisibility(View.VISIBLE);
+            }
+        });
+        Context mContext=this;
+        sendButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!inputMessage.isEmpty()){
+                    chatList.add(new ChatData(R.drawable.back,inputMessage,0));
+                }
+            }
+        });
+
+
         //player1，玩家自身
         LinearLayout LinearLayout1=(LinearLayout) findViewById(R.id.layout_player1);
         LinearLayout targetLayout=(LinearLayout) findViewById(R.id.Target_ui);
@@ -376,6 +424,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
         });
+
     }
 
     public void showToast(String text) {
@@ -439,5 +488,10 @@ public class MainActivity extends AppCompatActivity {
                     idle();
                 }
             });
+    }
+    public void receiveChat(ChatData chatData){
+        chatList.add(chatData);
+        //TODO:让适配器更新列表
+
     }
 }
