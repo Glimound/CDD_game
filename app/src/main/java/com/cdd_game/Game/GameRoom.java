@@ -1,5 +1,6 @@
 package com.cdd_game.Game;
 
+import com.cdd_game.MainActivity;
 import com.cdd_game.Player.Player;
 import com.cdd_game.Rule.Rule;
 
@@ -16,6 +17,7 @@ public class GameRoom {
     private static GameRoom gameRoomInstance = null;
     private Game game;
     private Rule rule;
+
     /**
      * 加入房间的玩家。按照玩家加入房间的顺序排序。
      */
@@ -24,8 +26,16 @@ public class GameRoom {
     private Player winner;
 
 
-    public GameRoom() {
+    private GameRoom(Rule rule, int playerNumLimit, Player winner, ArrayList<Player> players) {
+        this.rule = rule;
+        this.players = players;
+        this.playerNumLimit = playerNumLimit;
+        this.winner = winner;
+    }
 
+    public static void createGameRoom(Rule rule, int playerNumLimit, Player winner, ArrayList<Player> players) {
+        if (gameRoomInstance == null)
+            gameRoomInstance = new GameRoom(rule, playerNumLimit, winner, players);
     }
 
     public static GameRoom getGameRoomInstance() {
@@ -53,10 +63,14 @@ public class GameRoom {
         players.add(player);
     }
 
-    public void removePlayer(String deviceID) {
+    public void addPlayer(Player player) {
+        players.add(player);
+    }
+
+    public void removePlayer(String nickName) {
         Player player = null;
         for (Player playerTmp : players) {
-            if (playerTmp.getDeviceID().equals(deviceID)) {
+            if (playerTmp.getNickName().equals(nickName)) {
                 player = playerTmp;
                 break;
             }
@@ -64,6 +78,16 @@ public class GameRoom {
         if (winner == player)
             winner = null;
         players.remove(player);
+    }
+
+    public Player getPlayerByNickName(String nickName) {
+        if (!players.isEmpty()) {
+            for (Player player : players) {
+                if (player.getNickName().equals(nickName))
+                    return player;
+            }
+        }
+        return null;
     }
 
     public Rule getRule() {
@@ -80,5 +104,21 @@ public class GameRoom {
 
     public void setWinner(Player winner) {
         this.winner = winner;
+    }
+
+    public ArrayList<Player> getPlayers() {
+        return players;
+    }
+
+    public void setPlayers(ArrayList<Player> players) {
+        this.players = players;
+    }
+
+    public int getPlayerNumLimit() {
+        return playerNumLimit;
+    }
+
+    public void setPlayerNumLimit(int playerNumLimit) {
+        this.playerNumLimit = playerNumLimit;
     }
 }

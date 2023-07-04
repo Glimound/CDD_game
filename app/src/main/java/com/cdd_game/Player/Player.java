@@ -1,5 +1,7 @@
 package com.cdd_game.Player;
 
+import android.util.Log;
+
 import com.cdd_game.Card.Card;
 import com.cdd_game.Card.CardGroup;
 import com.cdd_game.Card.CardPool;
@@ -13,6 +15,7 @@ public class Player {
     private String nickName;
     private CardPool ownCards;
     private String deviceID;
+    private boolean isReady;
 
     // TODO：胜局 称号？
 
@@ -20,6 +23,13 @@ public class Player {
     public Player(String deviceID, String nickName){
         this.nickName = nickName;
         this.deviceID = deviceID;
+        this.isReady = false;
+        try {
+            this.ownCards = new CardPoolFactory().createCardPool("empty");
+        } catch (Exception e) {
+            Log.e("Game", "Create empty card pool failed.", e);
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -74,6 +84,14 @@ public class Player {
 
     public String getDeviceID(){
         return this.deviceID;
+    }
+
+    public boolean isReady() {
+        return isReady;
+    }
+
+    public void setReady(boolean ready) {
+        isReady = ready;
     }
 
 }

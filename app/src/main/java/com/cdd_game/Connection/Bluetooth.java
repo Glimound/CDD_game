@@ -1,21 +1,13 @@
 package com.cdd_game.Connection;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Handler;
 import android.util.Log;
-
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
 import com.cdd_game.MainActivity;
 
@@ -42,7 +34,7 @@ public class Bluetooth implements ConnectAdapter {
     }
 
     public void initialize(MainActivity activity, Handler handler) {
-        if (this.bluetoothAdapter != null) {
+        if (this.bluetoothAdapter == null) {
             this.bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
             if (this.bluetoothAdapter == null) {
                 Log.e("Bluetooth", "Device bluetooth hardware unsupported.");
@@ -53,6 +45,8 @@ public class Bluetooth implements ConnectAdapter {
         this.handler = handler;
         this.acceptThread = null;
         this.connectThread = null;
+        this.connectedThreadOfClient = null;
+        this.connectedThreadsOfServer = new HashMap<>();
     }
 
     /**
@@ -96,8 +90,12 @@ public class Bluetooth implements ConnectAdapter {
         bluetoothAdapter.cancelDiscovery();
     }
 
-    public void createRoom() {
-
+    public void createRoom(MainActivity activity) {
+        open(activity);
+        enableVisibility(activity);
+        // TODO: 应阻塞直至结果返回
+        acceptThread = new AcceptThread(this, handler);
+        acceptThread.start();
     }
 
     public void connectToRoom(int index) {

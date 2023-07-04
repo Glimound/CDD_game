@@ -48,7 +48,6 @@ public class ConnectThread extends Thread {
 
         Log.d("Bluetooth", "Client: Connected to server success.");
         manageConnectedSocket(mmSocket);  // 连接成功，执行操作
-        mmBluetooth.setConnectedThreadOfClient(mmConnectedThread);
     }
 
     public void cancel() {
@@ -62,6 +61,7 @@ public class ConnectThread extends Thread {
 
     public void manageConnectedSocket(BluetoothSocket mmSocket) {
         mmConnectedThread = new ConnectedThread(mmSocket, mmHandler);
+        mmBluetooth.setConnectedThreadOfClient(mmConnectedThread);
         mmConnectedThread.start();
         mmHandler.sendEmptyMessage(Bluetooth.CONNECTED_TO_SERVER);
         // TODO: 发送初始化信息：player name等等 写在main activity中
