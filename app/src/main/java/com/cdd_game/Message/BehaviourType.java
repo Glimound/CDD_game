@@ -9,9 +9,10 @@ package com.cdd_game.Message;
 public enum BehaviourType {
     PLAY_CARD,
     PASS,
-    WIN,
+    NEXT_TURN,
     PLAYER_JOINED,
     SHAKE_HAND,
     READY,
-    GAME_START
+    GAME_START,
+    GAME_ENDED
 }

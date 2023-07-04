@@ -379,6 +379,7 @@ public class MainActivity extends AppCompatActivity {
                             player.getDeviceID(), player.getNickName());
                     connector.getConnectedThreadOfClient().write(msg);
                     // TODO: 屏蔽该button
+                    imageA.setVisibility(View.VISIBLE);
 
                     button.setText("等待游戏开始");
                     button.setOnClickListener(new View.OnClickListener() {
@@ -402,7 +403,6 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                     if (readyPlayerNum == GameRoom.getGameRoomInstance().getPlayerNumLimit() - 1) {
-
                         // 生成gameID
                         GameRoom gameRoom = GameRoom.getGameRoomInstance();
                         String gameID = UUID.randomUUID().toString();
@@ -423,6 +423,7 @@ public class MainActivity extends AppCompatActivity {
                         setContentView(R.layout.game_ui);
                         game();
                     } else {
+                        Log.d("Game", "Not all players are ready.");
                         readyPlayerNum = 0;
                     }
                 }
@@ -508,12 +509,15 @@ public class MainActivity extends AppCompatActivity {
 
                 HashMap<Integer,String>tempMap=new HashMap<>();
 
+                CardGroup cardGroup;
+                // 创建空卡组
                 try {
-                    CardGroup cardGroup = new CardPoolFactory().createCardGroup(CardGroupType.UNKNOWN);
+                    cardGroup = new CardPoolFactory().createCardGroup(CardGroupType.UNKNOWN);
                 } catch (Exception e) {
-                    Log.e("Game", "Card Group create failed.");
+                    Log.e("Game", "Card group create failed.");
                     throw new RuntimeException(e);
                 }
+
                 for(int i=0;i<LinearLayout1.getChildCount();i++){
                     ImageButton child=(ImageButton) LinearLayout1.getChildAt(i);
                     if(child.getTranslationY()!=0){
@@ -523,8 +527,10 @@ public class MainActivity extends AppCompatActivity {
                         String tempCardName=imageMap.get(num1);
                         int index=tempCardName.indexOf("_");
                         String cardSuit=tempCardName.substring(0,index).toUpperCase();
-                        String cardRank=tempCardName.substring(index+1,tempCardName.length()).toUpperCase();
-
+                        String cardRank=tempCardName.substring(index+1).toUpperCase();
+                        Card card = Game.getGameInstance().getPlayerByNickName(player.getNickName())
+                                .getOwnCards().getCardBySuitAndRank(cardSuit, cardRank);
+                        cardGroup.addCard(card);
 
                         LinearLayout1.removeView(child);
                         child.setOnClickListener(new View.OnClickListener() {

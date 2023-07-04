@@ -1,6 +1,7 @@
 package com.cdd_game.Game;
 
 import com.cdd_game.Card.Card;
+import com.cdd_game.Card.CardGroup;
 import com.cdd_game.Card.CardPool;
 import com.cdd_game.Card.CardPoolFactory;
 import com.cdd_game.Card.CardRank;
@@ -28,6 +29,7 @@ public class Game {
     private ArrayList<Player> players;
     private int playerNum;
     private int gameTurn;
+    private CardGroup previousCards;
 
     private Game(String gameID, CardPool initialCards, CardPool discardCards, Rule rule , ArrayList<Player> players) {
         this.gameID = gameID;
@@ -37,6 +39,7 @@ public class Game {
         this.players = players;
         this.playerNum = players.size();
         this.gameTurn = 0;
+        this.previousCards = null;
     }
 
     /**
@@ -221,5 +224,13 @@ public class Game {
 
     public void setPlayers(ArrayList<Player> players) {
         this.players = players;
+    }
+
+    public CardGroup getPreviousCards() {
+        return previousCards;
+    }
+
+    public void setPreviousCards(CardGroup previousCards) {
+        this.previousCards = previousCards;
     }
 }
