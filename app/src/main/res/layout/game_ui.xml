@@ -10,6 +10,7 @@
 
     <ImageButton
         android:id="@+id/imageButton3"
+        android:visibility="invisible"
         android:layout_width="62dp"
         android:layout_height="45dp"
         android:backgroundTint="@color/cardview_shadow_end_color"
@@ -24,6 +25,7 @@
 
     <ImageButton
         android:id="@+id/imageButton2"
+        android:visibility="invisible"
         android:layout_width="69dp"
         android:layout_height="50dp"
         android:backgroundTint="@color/cardview_shadow_end_color"
@@ -98,6 +100,19 @@
         app:srcCompat="@drawable/back13" />
 
     <ImageView
+        android:id="@+id/flag2"
+        android:visibility="invisible"
+        android:layout_width="75dp"
+        android:layout_height="73dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/Target_ui"
+        app:layout_constraintHorizontal_bias="0.854"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.322"
+        app:srcCompat="@drawable/flag" />
+
+    <ImageView
         android:id="@+id/imageView2"
         android:layout_width="100dp"
         android:layout_height="82dp"
@@ -122,6 +137,19 @@
         app:srcCompat="@drawable/back13" />
 
     <ImageView
+        android:id="@+id/flag3"
+        android:visibility="invisible"
+        android:layout_width="76dp"
+        android:layout_height="70dp"
+        app:layout_constraintBottom_toTopOf="@+id/Target_ui"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.37"
+        app:layout_constraintStart_toEndOf="@+id/imageView2"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.588"
+        app:srcCompat="@drawable/flag" />
+
+    <ImageView
         android:id="@+id/imageView3"
         android:layout_width="100dp"
         android:layout_height="82dp"
@@ -144,4 +172,17 @@
         app:layout_constraintTop_toBottomOf="@+id/imageView3"
         app:layout_constraintVertical_bias="0.053"
         app:srcCompat="@drawable/back13" />
+
+    <ImageView
+        android:id="@+id/flag4"
+        android:visibility="invisible"
+        android:layout_width="80dp"
+        android:layout_height="73dp"
+        app:layout_constraintBottom_toTopOf="@+id/layout_player1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.097"
+        app:layout_constraintStart_toEndOf="@+id/Target_ui"
+        app:layout_constraintTop_toBottomOf="@+id/imageView3"
+        app:layout_constraintVertical_bias="0.154"
+        app:srcCompat="@drawable/flag" />
 </androidx.constraintlayout.widget.ConstraintLayout>

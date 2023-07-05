@@ -242,6 +242,40 @@ public class MessageParser {
                         // TODO: 下一回合，更新UI（如果轮到自己出牌，则显示出牌和跳过按钮）
                         Game.getGameInstance().gameTurnPlusOne();
                         String nickNameOfPlayerToPlayCards = Game.getGameInstance().getPlayerToPlayCard().getNickName();
+                        activity.imageButton2.setVisibility(View.INVISIBLE);
+                        activity.imageButton3.setVisibility(View.INVISIBLE);
+                        activity.imageF2.setVisibility(View.INVISIBLE);
+                        activity.imageF3.setVisibility(View.INVISIBLE);
+                        activity.imageF4.setVisibility(View.INVISIBLE);
+                        if(nickNameOfPlayerToPlayCards==activity.player.getNickName()){
+                            activity.imageButton2.setVisibility(View.VISIBLE);
+                            activity.imageButton3.setVisibility(View.VISIBLE);
+                        }else{
+                            Player curPlayer=GameRoom.getGameRoomInstance().getPlayerByNickName(nickNameOfPlayerToPlayCards);
+                            int num=GameRoom.getGameRoomInstance().getPlayers().indexOf(curPlayer);
+                            int num1=GameRoom.getGameRoomInstance().getPlayers().indexOf(activity.player);
+                            int offset=num-num1;
+                            switch(offset){
+                                case 1:
+                                    activity.imageF2.setVisibility(View.VISIBLE);
+                                    break;
+                                case 2:
+                                    activity.imageF3.setVisibility(View.VISIBLE);
+                                    break;
+                                case 3:
+                                    activity.imageF4.setVisibility(View.VISIBLE);
+                                    break;
+                                case -1:
+                                    activity.imageF4.setVisibility(View.VISIBLE);
+                                    break;
+                                case -2:
+                                    activity.imageF3.setVisibility(View.VISIBLE);
+                                    break;
+                                case -3:
+                                    activity.imageF2.setVisibility(View.VISIBLE);
+                                    break;
+                            }
+                        }
 
                     }
                 } else if (activity.state == State.CLIENT_PLAYING) {
@@ -261,6 +295,40 @@ public class MessageParser {
                     // TODO: 下一回合，更新UI（如果轮到自己出牌，则显示出牌和跳过按钮）
                     Game.getGameInstance().gameTurnPlusOne();
                     String nickNameOfPlayerToPlayCards = Game.getGameInstance().getPlayerToPlayCard().getNickName();
+                    activity.imageButton2.setVisibility(View.INVISIBLE);
+                    activity.imageButton3.setVisibility(View.INVISIBLE);
+                    activity.imageF2.setVisibility(View.INVISIBLE);
+                    activity.imageF3.setVisibility(View.INVISIBLE);
+                    activity.imageF4.setVisibility(View.INVISIBLE);
+                    if(nickNameOfPlayerToPlayCards==activity.player.getNickName()){
+                        activity.imageButton2.setVisibility(View.VISIBLE);
+                        activity.imageButton3.setVisibility(View.VISIBLE);
+                    }else{
+                        Player curPlayer=GameRoom.getGameRoomInstance().getPlayerByNickName(nickNameOfPlayerToPlayCards);
+                        int num=GameRoom.getGameRoomInstance().getPlayers().indexOf(curPlayer);
+                        int num1=GameRoom.getGameRoomInstance().getPlayers().indexOf(activity.player);
+                        int offset=num-num1;
+                        switch(offset){
+                            case 1:
+                                activity.imageF2.setVisibility(View.VISIBLE);
+                                break;
+                            case 2:
+                                activity.imageF3.setVisibility(View.VISIBLE);
+                                break;
+                            case 3:
+                                activity.imageF4.setVisibility(View.VISIBLE);
+                                break;
+                            case -1:
+                                activity.imageF4.setVisibility(View.VISIBLE);
+                                break;
+                            case -2:
+                                activity.imageF3.setVisibility(View.VISIBLE);
+                                break;
+                            case -3:
+                                activity.imageF2.setVisibility(View.VISIBLE);
+                                break;
+                        }
+                    }
 
                 } else if (activity.state == State.SERVER_PLAYING) {
                     Log.d("Message", "Server receive next turn message");
@@ -274,6 +342,40 @@ public class MessageParser {
                     // TODO: 下一回合，更新UI（如果轮到自己出牌，则显示出牌和跳过按钮）
                     Game.getGameInstance().gameTurnPlusOne();
                     String nickNameOfPlayerToPlayCards = Game.getGameInstance().getPlayerToPlayCard().getNickName();
+                    activity.imageButton2.setVisibility(View.INVISIBLE);
+                    activity.imageButton3.setVisibility(View.INVISIBLE);
+                    activity.imageF2.setVisibility(View.INVISIBLE);
+                    activity.imageF3.setVisibility(View.INVISIBLE);
+                    activity.imageF4.setVisibility(View.INVISIBLE);
+                    if(nickNameOfPlayerToPlayCards==activity.player.getNickName()){
+                        activity.imageButton2.setVisibility(View.VISIBLE);
+                        activity.imageButton3.setVisibility(View.VISIBLE);
+                    }else{
+                        Player curPlayer=GameRoom.getGameRoomInstance().getPlayerByNickName(nickNameOfPlayerToPlayCards);
+                        int num=GameRoom.getGameRoomInstance().getPlayers().indexOf(curPlayer);
+                        int num1=GameRoom.getGameRoomInstance().getPlayers().indexOf(activity.player);
+                        int offset=num-num1;
+                        switch(offset){
+                            case 1:
+                                activity.imageF2.setVisibility(View.VISIBLE);
+                                break;
+                            case 2:
+                                activity.imageF3.setVisibility(View.VISIBLE);
+                                break;
+                            case 3:
+                                activity.imageF4.setVisibility(View.VISIBLE);
+                                break;
+                            case -1:
+                                activity.imageF4.setVisibility(View.VISIBLE);
+                                break;
+                            case -2:
+                                activity.imageF3.setVisibility(View.VISIBLE);
+                                break;
+                            case -3:
+                                activity.imageF2.setVisibility(View.VISIBLE);
+                                break;
+                        }
+                    }
 
                 }
                 break;
