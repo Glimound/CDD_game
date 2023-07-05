@@ -67,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
      * 存储自身的MAC地址和nickName
      */
     public Player player = null;
+    private GameRoom gameRoom = null;
     private Toast toast = null;
     public State state;
     private MessageParser messageParser = new MessageParser(this);
@@ -85,6 +86,12 @@ public class MainActivity extends AppCompatActivity {
     public ImageView imageB1;
     public ImageView imageC1;
     public ImageView imageD1;
+    public ImageButton imageButton2;
+    public ImageButton imageButton3;
+
+    public ImageView imageF2;
+    public ImageView imageF3;
+    public ImageView imageF4;
     private Handler handler = new Handler(Looper.myLooper()) {
         @Override
         public void handleMessage(@NonNull Message msg) {
@@ -354,6 +361,10 @@ public class MainActivity extends AppCompatActivity {
         imageB1=this.findViewById(R.id.b1);
         imageC1=this.findViewById(R.id.c1);
         imageD1=this.findViewById(R.id.d1);
+
+        imageF2=this.findViewById(R.id.flag2);
+        imageF3=this.findViewById(R.id.flag3);
+        imageF4=this.findViewById(R.id.flag4);
         if(state==State.SERVER_WAITING){
             imageA.setVisibility(View.VISIBLE);
         }
@@ -372,8 +383,8 @@ public class MainActivity extends AppCompatActivity {
                     MessageSchema msg = new MsgReady(Calendar.getInstance().getTimeInMillis(),
                             player.getDeviceID(), player.getNickName());
                     connector.getConnectedThreadOfClient().write(msg);
-                    // TODO: 屏蔽该button
                     imageA.setVisibility(View.VISIBLE);
+                    // TODO: 屏蔽该button
 
                     button.setText("等待游戏开始");
                     button.setOnClickListener(new View.OnClickListener() {
@@ -433,7 +444,9 @@ public class MainActivity extends AppCompatActivity {
     public void showCardsUsed(String nickName, CardGroup cards){
 
         LinearLayout targetLayout=(LinearLayout) findViewById(R.id.Target_ui);
-
+        ImageView imageView2=(ImageView) findViewById(R.id.cards2);
+        ImageView imageView3=(ImageView) findViewById(R.id.cards3);
+        ImageView imageView4=(ImageView) findViewById(R.id.cards4);
         targetLayout.removeAllViews();
         int overlap=45;
         for(int i=0;i< cards.size();i++){
@@ -454,15 +467,39 @@ public class MainActivity extends AppCompatActivity {
             }
             targetLayout.addView(imageButton);
         }
-
+        Player curPlayer=GameRoom.getGameRoomInstance().getPlayerByNickName(nickName);
+        int numOfCard=curPlayer.getOwnCards().size();
+        int num=GameRoom.getGameRoomInstance().getPlayers().indexOf(curPlayer);
+        int num1=GameRoom.getGameRoomInstance().getPlayers().indexOf(player);
+        int offset=num-num1;
+        switch(offset){
+            case 1:
+                imageView2.setImageResource(func.getDrawableId(MainActivity.this,numOfCard));
+                break;
+            case 2:
+                imageView3.setImageResource(func.getDrawableId(MainActivity.this,numOfCard));
+                break;
+            case 3:
+                imageView4.setImageResource(func.getDrawableId(MainActivity.this,numOfCard));
+                break;
+            case -1:
+                imageView4.setImageResource(func.getDrawableId(MainActivity.this,numOfCard));
+                break;
+            case -2:
+                imageView3.setImageResource(func.getDrawableId(MainActivity.this,numOfCard));
+                break;
+            case -3:
+                imageView2.setImageResource(func.getDrawableId(MainActivity.this,numOfCard));
+                break;
+        }
     }
 
     public void game(){
 
         HashMap<Integer,String>imageMap=new HashMap<>();
 
-        ImageButton imageButton2=(ImageButton) findViewById(R.id.imageButton2);
-        ImageButton imageButton3=(ImageButton) findViewById(R.id.imageButton3);
+        imageButton2=(ImageButton) findViewById(R.id.imageButton2);
+        imageButton3=(ImageButton) findViewById(R.id.imageButton3);
         ImageView imageView2=(ImageView) findViewById(R.id.cards2);
         //player1，玩家自身
         LinearLayout LinearLayout1=(LinearLayout) findViewById(R.id.layout_player1);
@@ -591,7 +628,9 @@ public class MainActivity extends AppCompatActivity {
                                 .getCardBySuitAndRank(cardSuit, cardRank);
                         cardGroup.addCard(card);
 
+                        //i--;
                         count--;
+
 
                     }else{
                         tempMap.put(num,imageMap.get(num1));
@@ -668,7 +707,6 @@ public class MainActivity extends AppCompatActivity {
 
 
                 LinearLayout1.setGravity(View.TEXT_ALIGNMENT_CENTER);
-
 
             }
 
