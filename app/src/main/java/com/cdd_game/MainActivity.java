@@ -273,9 +273,6 @@ public class MainActivity extends AppCompatActivity {
                         ArrayList<Player> players = new ArrayList<>();
                         GameRoom.createGameRoom(rule[0], 4, null, players);
                         GameRoom.getGameRoomInstance().addPlayer(player);
-
-
-
                         state=State.SERVER_WAITING;
                         setContentView(R.layout.waiting1);
                         waiting();

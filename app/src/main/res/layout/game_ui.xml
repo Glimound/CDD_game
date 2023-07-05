@@ -62,8 +62,8 @@
         app:layout_constraintHorizontal_bias="0.482"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.873"></LinearLayout>
-
+        app:layout_constraintVertical_bias="0.873">
+    </LinearLayout>
 
     <ImageView
         android:layout_width="100dp"
@@ -110,7 +110,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.322"
-        app:srcCompat="@drawable/flag" />
+        app:srcCompat="@drawable/x" />
 
     <ImageView
         android:id="@+id/imageView2"
@@ -147,7 +147,7 @@
         app:layout_constraintStart_toEndOf="@+id/imageView2"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.588"
-        app:srcCompat="@drawable/flag" />
+        app:srcCompat="@drawable/x" />
 
     <ImageView
         android:id="@+id/imageView3"
@@ -184,7 +184,7 @@
         app:layout_constraintStart_toEndOf="@+id/Target_ui"
         app:layout_constraintTop_toBottomOf="@+id/imageView3"
         app:layout_constraintVertical_bias="0.154"
-        app:srcCompat="@drawable/flag" />
+        app:srcCompat="@drawable/x" />
 
 
     <!--  消息按钮  -->
@@ -198,9 +198,9 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/layout_player1"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView"
         tools:ignore="MissingConstraints" />
 
+    <!--聊天框布局文件-->
     <LinearLayout
         android:id="@+id/dialog_box"
         android:layout_width="270dp"
@@ -276,7 +276,7 @@
 
 </LinearLayout>
 
-    <!--聊天框布局文件-->
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
