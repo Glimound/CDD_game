@@ -3,13 +3,8 @@ package com.cdd_game;
 import androidx.annotation.NonNull;
 import androidx.activity.result.*;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.MainThread;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
-import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -28,15 +23,11 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.provider.Settings;
 import android.text.Editable;
-import android.text.StaticLayout;
 import android.text.TextWatcher;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -45,24 +36,21 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.cdd_game.Card.Card;
 import com.cdd_game.Card.CardGroup;
 import com.cdd_game.Card.CardGroupType;
-import com.cdd_game.Card.CardPool;
 import com.cdd_game.Card.CardPoolFactory;
 import com.cdd_game.Game.Game;
 import com.cdd_game.Game.GameRoom;
 
-import java.lang.annotation.Target;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import com.cdd_game.Message.BehaviourType;
+
 import com.cdd_game.Connection.Bluetooth;
 import com.cdd_game.Connection.ConnectAdapter;
 import com.cdd_game.Message.*;
@@ -71,7 +59,6 @@ import com.cdd_game.Rule.NormalRule;
 import com.cdd_game.Rule.Rule;
 
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
@@ -85,7 +72,8 @@ public class MainActivity extends AppCompatActivity {
     private MessageParser messageParser = new MessageParser(this);
     private HashMap<Player, BluetoothSocket> socketMapping;
     public String tmpMAC;
-    ArrayList<String>itemList=new ArrayList<>();
+    List<String> itemList = Collections.synchronizedList(new ArrayList<>());
+    //ArrayList<String>itemList=new ArrayList<>();
     ArrayAdapter<String> adapter;
 
     public ImageView imageA;

@@ -30,6 +30,7 @@ public class MessageParser {
                 MsgShakeHands tmpMsg = (MsgShakeHands) msg;
                 if (activity.state == State.SERVER_WAITING) {
                     Log.d("Message", "Server receive shake hand message. The player: " + tmpMsg.nickName);
+                    // TODO: 判断房间已满
                     // 修改MAC-线程映射为nickName-线程映射
                     activity.connector.getConnectedThreadsOfServer().put(tmpMsg.nickName, activity.connector.getConnectedThreadsOfServer().get(activity.tmpMAC));
                     activity.connector.getConnectedThreadsOfServer().remove(activity.tmpMAC);

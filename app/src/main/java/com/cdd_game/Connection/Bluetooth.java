@@ -12,14 +12,17 @@ import android.util.Log;
 import com.cdd_game.MainActivity;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 
 public class Bluetooth implements ConnectAdapter {
     public final static int MSG_ERROR = 0, CONNECTED_TO_SERVER = 1, GOT_A_CLIENT = 2,
             MESSAGE_READ = 3, MESSAGE_WRITTEN = 4, MESSAGE_SENT_FAILED = 5;
 
     private BluetoothAdapter bluetoothAdapter;
-    private ArrayList<BluetoothDevice> devices; // TODO: 线程不安全
+    private List<BluetoothDevice> devices;
+    // private ArrayList<BluetoothDevice> devices;  // 线程不安全
     private BluetoothServerSocket serverSocket;
     private BluetoothSocket clientSocket;
     private Handler handler;
@@ -41,7 +44,7 @@ public class Bluetooth implements ConnectAdapter {
                 activity.showToast("Device bluetooth hardware unsupported.");
             }
         }
-        this.devices = new ArrayList<>();
+        this.devices = Collections.synchronizedList(new ArrayList<>());
         this.handler = handler;
         this.acceptThread = null;
         this.connectThread = null;
@@ -108,7 +111,7 @@ public class Bluetooth implements ConnectAdapter {
         connectThread.start();
     }
 
-    public ArrayList<BluetoothDevice> getDevices() {
+    public List<BluetoothDevice> getDevices() {
         return devices;
     }
 

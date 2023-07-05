@@ -10,6 +10,7 @@ import com.cdd_game.MainActivity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public interface ConnectAdapter {
     AcceptThread acceptThread = null;
@@ -18,7 +19,7 @@ public interface ConnectAdapter {
 
     void initialize(MainActivity activity, Handler handler);
 
-    ArrayList<BluetoothDevice> getDevices();
+    List<BluetoothDevice> getDevices();
 
     void enableVisibility(MainActivity activity);
 
