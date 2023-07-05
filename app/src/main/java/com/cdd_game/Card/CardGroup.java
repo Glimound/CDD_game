@@ -1,5 +1,7 @@
 package com.cdd_game.Card;
 
+import androidx.annotation.NonNull;
+
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -117,6 +119,19 @@ public class CardGroup extends CardPool{
         for (Card card; getLastCard().getRank() == CardRank.Card_2; ) {
             cards.add(0, removeLastCard());
             cardCounter++;
+        }
+    }
+
+    @NonNull
+    public String toString() {
+        if (cards.isEmpty()) {
+            return "empty";
+        } else {
+            StringBuilder str = new StringBuilder();
+            for (Card card : cards) {
+                str.append(card.toString());
+            }
+            return str.toString();
         }
     }
 

@@ -1,5 +1,7 @@
 package com.cdd_game.Game;
 
+import android.util.Log;
+
 import com.cdd_game.MainActivity;
 import com.cdd_game.Player.Player;
 import com.cdd_game.Rule.Rule;
@@ -54,6 +56,17 @@ public class GameRoom {
         else
             return players.get(++index);
     }
+
+    public void createGame(String gameID) {
+        try {
+            Game.createGame(gameID, this.rule, this.players);
+        } catch (Exception e) {
+            Log.d("Game", "Create game instance failed");
+            throw new RuntimeException(e);
+        }
+        game = Game.getGameInstance();
+    }
+
 
     /**
      * 玩家加入房间

@@ -1,5 +1,7 @@
 package com.cdd_game.Card;
 
+import androidx.annotation.NonNull;
+
 public class Card implements Comparable<Card> {
 
     private final int id;
@@ -47,5 +49,12 @@ public class Card implements Comparable<Card> {
                 return 0;
             }
         }
+    }
+
+    @NonNull
+    public String toString() {
+        String suitStr = suit.getName().substring(0, 1);
+        String rankStr = rank.getName();
+        return suitStr + rankStr;
     }
 }

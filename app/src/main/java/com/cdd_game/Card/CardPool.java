@@ -77,6 +77,19 @@ public class CardPool {
     }
 
     /**
+     * 返回卡池中对应花色和点数的卡，若卡池中无牌或未找到则返回null。
+     */
+    public Card getCardBySuitAndRank(String suit, String rank) {
+        if (cards.isEmpty())
+            return null;
+        for (Card card : cards) {
+            if (card.getSuit().getName().equals(suit) && card.getRank().getName().equals(rank))
+                return card;
+        }
+        return null;
+    }
+
+    /**
      * 返回卡池中第一张牌，若卡池中无牌则返回null。
      */
     public Card getFirstCard() {

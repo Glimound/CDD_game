@@ -23,13 +23,15 @@ public class Game {
     private CardPool initialCards;
     private CardPool discardCards;
     private Rule rule;
-    private Set<Player> players;
-    private ArrayList<Player> playerOrder;
+    /**
+     * 初始化后，玩家顺序为出牌顺序
+     */
+    private ArrayList<Player> players;
     private int playerNum;
     private int gameTurn;
-    private CardGroup lastCards;
+    private CardGroup previousCards;
 
-    private Game(String gameID, CardPool initialCards, CardPool discardCards, Rule rule , Set<Player> players) {
+    private Game(String gameID, CardPool initialCards, CardPool discardCards, Rule rule , ArrayList<Player> players) {
         this.gameID = gameID;
         this.initialCards = initialCards;
         this.discardCards = discardCards;
@@ -37,11 +39,9 @@ public class Game {
         this.players = players;
         this.playerNum = players.size();
         this.gameTurn = 0;
-        this.lastCards=null;
-        this.playerOrder = new ArrayList<>();
+        this.previousCards = null;
     }
 
-    public Game(){}
     /**
      * 返回游戏实例
      */
@@ -50,43 +50,31 @@ public class Game {
     }
 
     /**
-     * 初始化游戏：创建游戏实例，设置游戏ID、卡池、规则、player集合；
-     * 初始化Player对象中的卡池
+     * 创建游戏：创建游戏实例，设置游戏ID、卡池、规则、player集合；
+     * 初始化Player对象中的卡池为空卡池
      */
-    private void initialize(String gameID, Rule rule, Set<Player> players) throws Exception {
-        // TODO: if (rule.getGameType().equals("CDD"))
-        CardPoolFactory factory = new CardPoolFactory();
-        CardPool initialCards = factory.createCardPool("withoutJokers");
-        CardPool discardCards = factory.createCardPool("empty");
-        gameInstance = new Game(gameID, initialCards, discardCards, rule, players);
+    static void createGame(String gameID, Rule rule, ArrayList<Player> players) throws Exception {
+        if (gameInstance == null) {
+            // TODO: if (rule.getGameType().equals("CDD"))
+            CardPoolFactory factory = new CardPoolFactory();
+            CardPool initialCards = factory.createCardPool("withoutJokers");
+            CardPool discardCards = factory.createCardPool("empty");
+            gameInstance = new Game(gameID, initialCards, discardCards, rule, players);
 
-        for (Player player : players) {
-            player.setOwnCards(factory.createCardPool("empty"));
+            for (Player player : players) {
+                player.setOwnCards(factory.createCardPool("empty"));
+            }
         }
     }
 
     /**
-     * 主机开始游戏：初始化游戏、发牌、设置玩家出牌顺序
+     * 初始化游戏：发牌、设置玩家出牌顺序
      */
-    public void server_start(String gameID, Rule rule, Set<Player> players, Player winner) throws Exception {
-        if (gameInstance == null) {
-            initialize(gameID, rule, players);
-            dealCards();
-            setPlayerOrder(winner);
-        }
+    public void initialize(Player winner) {
+        dealCards();
+        setPlayerOrder(winner);
     }
 
-    /**
-     *客户端：根据主机传递的信息，设置gameID，rule,winner,initialCards,discardCards,playOrder等等
-     * TODO:确认客户端应该收到什么信息并传递给start函数
-     * @throws Exception
-     */
-    public void client_start(String gameID, Rule rule, Set<Player> players, Player winner) throws Exception {
-        if (gameInstance == null) {
-            initialize(gameID, rule, players);
-            setPlayerOrder(winner);
-        }
-    }
     /**
      * 打乱牌堆，将牌堆均等分为n份（n为玩家人数），并分配给每个玩家
      */
@@ -108,6 +96,7 @@ public class Game {
      * @param winner 上一局获胜的玩家
      */
     private void setPlayerOrder(Player winner) {
+        ArrayList<Player> playerOrder = new ArrayList<>();
         if (winner == null) {
             for (Player player: players) {
                 if (player.getOwnCards().getCardBySuitAndRank(CardSuit.DIAMOND, CardRank.Card_3) != null) {
@@ -127,6 +116,8 @@ public class Game {
         playerOrder.add(player3);
         playerOrder.add(player4);
 
+        players = playerOrder;
+
         /* TODO:不限于玩家人数（使用策略模式，拼接不同的Rule）
         Player playerTmp = playerOrder.get(0);
         for (int i = 0; i < ruleStrategy.getPlayerNumRule().getPlayerNum() - 1; i++) {
@@ -140,15 +131,23 @@ public class Game {
      * 返回当前回合该出牌的玩家
      */
     public Player getPlayerToPlayCard() {
-        //playOrder为从0开始的链表，需要turn模4再减一
-        return playerOrder.get(gameTurn % 4-1);
+        return players.get(gameTurn % 4);
         /* TODO:不限于玩家人数（使用策略模式，拼接不同的Rule）
         return playerOrder.get(gameTurn % ruleStrategy.getPlayerNumRule().getPlayerNum());
          */
     }
 
+    public Player getPlayerByNickName(String nickName) {
+        if (!players.isEmpty()) {
+            for (Player player : players) {
+                if (player.getNickName().equals(nickName))
+                    return player;
+            }
+        }
+        return null;
+    }
+
     /**
-     * TODO: 涉及蓝牙连接
      * 切换至下一个玩家出牌，向玩家发送信息，并更改对应的state；应当由玩家的State实例调用（可通过Controller）。
      */
     public void nextTurn() {
@@ -162,10 +161,9 @@ public class Game {
      * 结束游戏，向玩家发送信息，并更改对应的state；应当由玩家的State实例调用（可通过Controller）。
      * 恢复GameRoom和Player等实例中部分具有持久性的变量恢复至Game实例初始化之前的状态
      */
-    public void endGame() throws Exception {
+    public void endGame() {
         // 获得输赢信息
         // 结算 getGameScore()
-        getGameScore();
         // 根据游戏输赢发送消息给对应player
 
         for (Player player : players) {
@@ -187,12 +185,6 @@ public class Game {
         return rule.computeGameScore(remainingCards);
     }
 
-    public void addPlayer(Player player) {
-        players.add(player);
-        playerNum++;
-    }
-
-
     public Rule getRule(){
         return rule;
     }
@@ -209,16 +201,12 @@ public class Game {
         return gameID;
     }
 
-    public Set<Player> getPlayers() {
+    public ArrayList<Player> getPlayers() {
         return players;
     }
 
     public int getPlayerNum() {
         return playerNum;
-    }
-
-    public ArrayList<Player> getPlayerOrder() {
-        return playerOrder;
     }
 
     public int getGameTurn() {
@@ -228,18 +216,20 @@ public class Game {
     public void gameTurnPlusOne() {
         gameTurn++;
     }
-    public void setLastCards(CardGroup LastCards){
-        lastCards=LastCards;
-    }
-    public CardGroup getLastCards(){
-        return lastCards;
-    }
 
     public void setRule(Rule rule) {
         this.rule = rule;
     }
 
-    public void setPlayers(Set<Player> players) {
+    public void setPlayers(ArrayList<Player> players) {
         this.players = players;
+    }
+
+    public CardGroup getPreviousCards() {
+        return previousCards;
+    }
+
+    public void setPreviousCards(CardGroup previousCards) {
+        this.previousCards = previousCards;
     }
 }

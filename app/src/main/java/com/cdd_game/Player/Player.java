@@ -24,12 +24,6 @@ public class Player {
         this.nickName = nickName;
         this.deviceID = deviceID;
         this.isReady = false;
-        try {
-            this.ownCards = new CardPoolFactory().createCardPool("empty");
-        } catch (Exception e) {
-            Log.e("Game", "Create empty card pool failed.", e);
-            throw new RuntimeException(e);
-        }
     }
 
     /**
