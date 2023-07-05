@@ -20,7 +20,7 @@
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:src="@drawable/right_image"
-        android:contentDescription="@string/todo" />
+        android:src="@drawable/back1"
+        />
 
 </LinearLayout>

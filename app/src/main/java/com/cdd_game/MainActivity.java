@@ -6,8 +6,6 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
@@ -79,8 +77,8 @@ public class MainActivity extends AppCompatActivity {
     public State state;
     private MessageParser messageParser = new MessageParser(this);
     private HashMap<Player, BluetoothSocket> socketMapping;
-    ChatAdapter chatAdapter=new ChatAdapter();
-    LinkedList<ChatData> chatList=new LinkedList<>();
+    ArrayList<ChatData> chatList=new ArrayList<>();
+    ChatAdapter chatAdapter;
     public String tmpMAC;
     ArrayList<String>itemList=new ArrayList<>();
     ArrayAdapter<String> adapter;
@@ -470,6 +468,7 @@ public class MainActivity extends AppCompatActivity {
         LinearLayout dialogBox = findViewById(R.id.dialog_box);
         ListView listView=findViewById(R.id.chatContent);
         String inputMessage=findViewById(R.id.input_message).toString();
+        listView.setAdapter(chatAdapter);
         // 设置点击监听器
         messageButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -486,12 +485,14 @@ public class MainActivity extends AppCompatActivity {
                 messageButton.setVisibility(View.VISIBLE);
             }
         });
-        Context mContext=this;
+        //发送消息
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(!inputMessage.isEmpty()){
-                    chatList.add(new ChatData(R.drawable.back,inputMessage,0));
+                    //TODO:将头像更换为对应头像
+                    ChatData myChat=new ChatData(R.drawable.back,inputMessage,0);
+                    receiveChat(myChat,listView);
                 }
             }
         });
@@ -703,9 +704,12 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
     }
-    public void receiveChat(ChatData chatData){
+    public void receiveChat(ChatData chatData,ListView listView){
+        //将新消息发送到数据源中
         chatList.add(chatData);
-        //TODO:让适配器更新列表
-
+        //让适配器更新列表
+        chatAdapter.notifyDataSetChanged();
+        //滚动到最底部
+       listView.smoothScrollToPosition(chatList.size() - 1);
     }
 }

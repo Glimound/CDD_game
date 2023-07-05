@@ -2,6 +2,7 @@
     <string name="app_name">CDD_game</string>
     <string name="continue_game">继续游戏</string>
     <string name="return_main_menu">返回主界面</string>
+    <string name="txt_information" />
     <string-array name="rule">
 
         <item>南方规则</item>
