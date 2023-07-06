@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg3">
+
+    <TextView
+        android:id="@+id/result_text"
+        android:text="胜利/失败"
+        android:textSize="24sp"
+        android:textColor="@android:color/black"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        />
+
+    <TableLayout
+        android:id="@+id/score_table"
+        android:stretchColumns="*"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:layout_marginBottom="40dp">
+
+        <TableRow>
+
+            <TextView
+                android:layout_column="0"
+                android:layout_gravity="center"
+                android:padding="3dip"
+                android:text="昵称" />
+
+            <TextView
+                android:text="剩余牌数"
+                android:layout_column="1"
+                android:layout_gravity="center"
+                android:padding="3dip" />
+            <TextView
+                android:text="得分"
+                android:layout_column="2"
+                android:layout_gravity="center"
+                android:padding="3dip" />
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                android:layout_column="0"
+                android:layout_gravity="center"
+                android:padding="3dip"
+                android:text="玩家 1" />
+
+            <TextView
+                android:text="剩余牌数"
+                android:layout_column="1"
+                android:layout_gravity="center"
+                android:padding="3dip" />
+            <TextView
+                android:text="100"
+                android:layout_column="2"
+                android:layout_gravity="center"
+                android:padding="3dip" />
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                android:layout_column="0"
+                android:layout_gravity="center"
+                android:padding="3dip"
+                android:text="玩家 2" />
+
+            <TextView
+                android:text="剩余牌数"
+                android:layout_column="1"
+                android:layout_gravity="center"
+                android:padding="3dip" />
+            <TextView
+                android:text="80"
+                android:layout_column="2"
+                android:layout_gravity="center"
+                android:padding="3dip" />
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:text="玩家 3"
+                android:layout_column="0"
+                android:layout_gravity="center"
+                android:padding="3dip" />
+            <TextView
+                android:text="剩余牌数"
+                android:layout_column="1"
+                android:layout_gravity="center"
+                android:padding="3dip" />
+            <TextView
+                android:text="60"
+                android:layout_column="2"
+                android:layout_gravity="center"
+                android:padding="3dip" />
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:text="玩家 4"
+                android:layout_column="0"
+                android:layout_gravity="center"
+                android:padding="3dip" />
+            <TextView
+                android:text="剩余牌数"
+                android:layout_column="1"
+                android:layout_gravity="center"
+                android:padding="3dip" />
+            <TextView
+                android:text="40"
+                android:layout_column="2"
+                android:layout_gravity="center"
+                android:padding="3dip" />
+        </TableRow>
+    </TableLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/continue_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/continue_game" />
+        <Space
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"/>
+
+        <Button
+            android:id="@+id/end_button"
+            android:text="@string/return_main_menu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+</LinearLayout>

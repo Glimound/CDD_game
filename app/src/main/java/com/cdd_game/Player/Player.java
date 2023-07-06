@@ -29,22 +29,21 @@ public class Player {
     /**
      * @param cards
      * cards 代表玩家准备出的牌
+     * TODO:切换玩家状态，并发送相应消息；玩家的出牌函数应该包含哪些？
      * @return
      */
-    public void playCard(CardGroup cards){
-        //TODO：首先检查出的牌是否符合规则(待修改）
-        if(Game.getGameInstance().getRule().validate(cards)){
-            //TODO：再检查出牌是否大于上家()
-            /*if(Game.getGameInstance().getRule().checkAmount(cards,Game.getGameInstance().lastcards)){
-                //将要出的牌从手牌中去除，并加入到弃牌堆中
+    public void playCard(CardGroup cards) {
+        if (Game.getGameInstance().getRule().validate(cards)) {
+            if (Game.getGameInstance().getRule().compareToCards(cards, Game.getGameInstance().getPreviousCards())) {
+                //将要出的牌从手牌中去除，加入到弃牌堆中,并设置为上家出的牌
                 ownCards.removeCards(cards);
                 Game.getGameInstance().getDiscardCards().addCards(cards);
-                */
-            // 切换状态
-        } else {
-            // 发送消息
+                // 切换状态
+            } else {
+                // 发送消息
+            }
         }
-}
+    }
     public void pass(){
         Game.getGameInstance().gameTurnPlusOne();
         Game.getGameInstance().nextTurn();
