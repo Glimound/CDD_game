@@ -61,7 +61,7 @@ public class ConnectedThread extends Thread {
                 while ((numBytes = mmInStream.read(mmBuffer)) > -1) {
                     baos.write(mmBuffer, 0, numBytes);
                     baos.flush();
-                    Thread.sleep(200);
+                    Thread.sleep(100);
                     if (mmInStream.available() == 0)
                         break;
                 }

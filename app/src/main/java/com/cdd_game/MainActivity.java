@@ -305,22 +305,6 @@ public class MainActivity extends AppCompatActivity {
 
         String[] name = {"未命名"};
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                /**
-                 *  position为点击项的索引
-                 */
-                player = new Player(connector.getBluetoothAdapter().getAddress(), name[0]);
-                connector.connectToRoom(position);
-                // TODO: 进度条
-
-
-//                state=State.CLIENT_WAITING;
-//                setContentView(R.layout.waiting1);
-//                waiting();
-            }
-        });
 
         ImageButton imageButton= (ImageButton) this.findViewById(R.id.imageButton_exit);
         EditText id=(EditText) findViewById(R.id.ClientId);
@@ -348,6 +332,22 @@ public class MainActivity extends AppCompatActivity {
                  * 将用户名（此处为加入房间玩家）设置为id
                  */
                 name[0] = nickName;
+                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        /**
+                         *  position为点击项的索引
+                         */
+                        player = new Player(connector.getBluetoothAdapter().getAddress(), name[0]);
+                        connector.connectToRoom(position);
+                        // TODO: 进度条
+
+
+//                state=State.CLIENT_WAITING;
+//                setContentView(R.layout.waiting1);
+//                waiting();
+                    }
+                });
             }
         });
     }
@@ -660,6 +660,43 @@ public class MainActivity extends AppCompatActivity {
                             Log.d("Message", "Server sent next turn message to " + tmpPlayer.getNickName() + ".");
                         }
                     }
+
+                    Game.getGameInstance().gameTurnPlusOne();
+                    String nickNameOfPlayerToPlayCards = Game.getGameInstance().getPlayerToPlayCard().getNickName();
+                    imageButton2.setVisibility(View.INVISIBLE);
+                    imageButton3.setVisibility(View.INVISIBLE);
+                    imageF2.setVisibility(View.INVISIBLE);
+                    imageF3.setVisibility(View.INVISIBLE);
+                    imageF4.setVisibility(View.INVISIBLE);
+                    if(nickNameOfPlayerToPlayCards.equals(player.getNickName())){
+                        imageButton2.setVisibility(View.VISIBLE);
+                        imageButton3.setVisibility(View.VISIBLE);
+                    }else{
+                        Player curPlayer=GameRoom.getGameRoomInstance().getPlayerByNickName(nickNameOfPlayerToPlayCards);
+                        int num2=GameRoom.getGameRoomInstance().getPlayers().indexOf(curPlayer);
+                        int num3=GameRoom.getGameRoomInstance().getPlayers().indexOf(player);
+                        int offset=num2-num3;
+                        switch(offset){
+                            case 1:
+                                imageF2.setVisibility(View.VISIBLE);
+                                break;
+                            case 2:
+                                imageF3.setVisibility(View.VISIBLE);
+                                break;
+                            case 3:
+                                imageF4.setVisibility(View.VISIBLE);
+                                break;
+                            case -1:
+                                imageF4.setVisibility(View.VISIBLE);
+                                break;
+                            case -2:
+                                imageF3.setVisibility(View.VISIBLE);
+                                break;
+                            case -3:
+                                imageF2.setVisibility(View.VISIBLE);
+                                break;
+                        }
+                    }
                 }
             }
         });
@@ -667,7 +704,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 /**
-                 * 还未测试
+                 * 点击出牌
                  */
                 targetLayout.removeAllViews();
                 int num=0;
@@ -717,21 +754,33 @@ public class MainActivity extends AppCompatActivity {
                 boolean isBigger;
                 if (game.getPreviousCards() == null)
                     isBigger = true;
-                else
+                else if (!game.getPreviousCardsOwner().getNickName().equals(player.getNickName()))
                     isBigger = game.getRule().compareToCards(game.getPreviousCards(), cardGroup);
+                else
+                    isBigger = true;
+                    // TODO: 上家牌若为自己的牌 屏蔽不要按钮
+
 
                 /**
                  * 如果牌型正确且比上家大
                  */
                 if (isValid && isBigger) {
-                    // 发送消息给服务器（客户端）
                     MessageSchema msg = new MsgPlayCard(Calendar.getInstance().getTimeInMillis(),
                             player.getDeviceID(), player.getNickName(), cardGroup);
+
                     if (state == State.CLIENT_PLAYING) {
+                        // 发送消息给服务器
                         connector.getConnectedThreadOfClient().write(msg);
                         Log.d("Message", "Client sent play card message to server." + "\n\tPlayer: "
                                 + player.getNickName() + "\n\tCards: " + cardGroup.toString());
+
+                        game.setPreviousCards(cardGroup);
+                        game.setPreviousCardsOwner(Game.getGameInstance().getPlayerByNickName(player.getNickName()));
+                        // 在本机的Game实例中删除该玩家的牌
+                        game.getPlayerByNickName(player.getNickName()).getOwnCards().removeCards(cardGroup);
+
                     } else if (state == State.SERVER_PLAYING) {
+                        // 发送消息给客户端
                         for (Player tmpPlayer : Game.getGameInstance().getPlayers()) {
                             if (!tmpPlayer.getNickName().equals(player.getNickName())) {
                                 connector.getConnectedThreadsOfServer().get(tmpPlayer.getNickName()).write(msg);
@@ -740,10 +789,83 @@ public class MainActivity extends AppCompatActivity {
                                         + "\n\tCards: " + cardGroup.toString());
                             }
                         }
-                    }
 
+                        try {
+                            Thread.sleep(500);
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+
+                        game.setPreviousCards(cardGroup);
+                        game.setPreviousCardsOwner(Game.getGameInstance().getPlayerByNickName(player.getNickName()));
+                        // 在本机的Game实例中删除牌
+                        game.getPlayerByNickName(player.getNickName()).getOwnCards().removeCards(cardGroup);
+
+                        // 判断自己是否胜利
+                        if (game.getPlayerByNickName(player.getNickName()).getOwnCards().isEmpty()) {
+                            // 若自己的牌出完，发送游戏结束消息给所有客户端玩家
+                            MessageSchema endGameMsg = new MsgGameEnd(Calendar.getInstance().getTimeInMillis(),
+                                    player.getDeviceID(), player.getNickName(), player.getNickName());
+                            for (Player player : Game.getGameInstance().getPlayers()) {
+                                if (!player.getNickName().equals(player.getNickName())) {
+                                    connector.getConnectedThreadsOfServer().get(player.getNickName()).write(endGameMsg);
+                                    Log.d("Message", "Server sent end game message to " + player.getNickName() + ".");
+                                }
+                            }
+
+                            // 本机游戏结束，TODO: 切换界面至结算界面，在结算界面中computeScore, deleteGame
+                            GameRoom.getGameRoomInstance().setWinner(player);
+                        } else {
+                            // 未胜利，发送下一回合消息给所有客户端玩家
+                            MessageSchema nextTurnMsg = new MsgNextTurn(Calendar.getInstance().getTimeInMillis(),
+                                    player.getDeviceID(), player.getNickName());
+                            for (Player tmpPlayer : Game.getGameInstance().getPlayers()) {
+                                if (!tmpPlayer.getNickName().equals(player.getNickName())) {
+                                    connector.getConnectedThreadsOfServer().get(tmpPlayer.getNickName()).write(nextTurnMsg);
+                                    Log.d("Message", "Server sent next turn message to " + tmpPlayer.getNickName() + ".");
+                                }
+                            }
+
+                            Game.getGameInstance().gameTurnPlusOne();
+                            String nickNameOfPlayerToPlayCards = Game.getGameInstance().getPlayerToPlayCard().getNickName();
+                            imageButton2.setVisibility(View.INVISIBLE);
+                            imageButton3.setVisibility(View.INVISIBLE);
+                            imageF2.setVisibility(View.INVISIBLE);
+                            imageF3.setVisibility(View.INVISIBLE);
+                            imageF4.setVisibility(View.INVISIBLE);
+                            if (nickNameOfPlayerToPlayCards.equals(player.getNickName())) {
+                                imageButton2.setVisibility(View.VISIBLE);
+                                imageButton3.setVisibility(View.VISIBLE);
+                            } else {
+                                Player curPlayer = GameRoom.getGameRoomInstance().getPlayerByNickName(nickNameOfPlayerToPlayCards);
+                                int num2 = GameRoom.getGameRoomInstance().getPlayers().indexOf(curPlayer);
+                                int num3 = GameRoom.getGameRoomInstance().getPlayers().indexOf(player);
+                                int offset = num2 - num3;
+                                switch (offset) {
+                                    case 1:
+                                        imageF2.setVisibility(View.VISIBLE);
+                                        break;
+                                    case 2:
+                                        imageF3.setVisibility(View.VISIBLE);
+                                        break;
+                                    case 3:
+                                        imageF4.setVisibility(View.VISIBLE);
+                                        break;
+                                    case -1:
+                                        imageF4.setVisibility(View.VISIBLE);
+                                        break;
+                                    case -2:
+                                        imageF3.setVisibility(View.VISIBLE);
+                                        break;
+                                    case -3:
+                                        imageF2.setVisibility(View.VISIBLE);
+                                        break;
+                                }
+                            }
+                        }
+                    }
                     // 更新UI
-                    for(int i=0;i< children.size();i++){
+                    for (int i = 0; i < children.size(); i++) {
                         LinearLayout1.removeView(children.get(i));
                         children.get(i).setOnClickListener(new View.OnClickListener() {
                             @Override
@@ -753,18 +875,17 @@ public class MainActivity extends AppCompatActivity {
                         });
                         targetLayout.addView(children.get(i));
                     }
-                    for(int i=0;i<count;i++){
-                        ImageButton child=(ImageButton) LinearLayout1.getChildAt(i);
-                        LinearLayout.LayoutParams layoutParams=(LinearLayout.LayoutParams)child.getLayoutParams();
-                        if(i>0){
+                    for (int i = 0; i < count; i++) {
+                        ImageButton child = (ImageButton) LinearLayout1.getChildAt(i);
+                        LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) child.getLayoutParams();
+                        if (i > 0) {
                             layoutParams.leftMargin = -overlap; // 设置水平偏移量
-                        }else
-                        {
+                        } else {
                             layoutParams.leftMargin = 0;
                         }
                     }
 
-                    if(tempMap.size()==count){
+                    if (tempMap.size() == count) {
                         imageMap.putAll(tempMap);
                     }
 

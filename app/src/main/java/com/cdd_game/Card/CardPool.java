@@ -134,7 +134,7 @@ public class CardPool {
         if (cardPool.isEmpty())
             return true;
         for (Card card : cardPool.cards) {
-            if (cards.contains(card)) {
+            if (containsCard(card)) {
                 cards.remove(card);
                 cardCounter--;
             }
@@ -236,6 +236,14 @@ public class CardPool {
 
     public boolean isEmpty() {
        return (size() == 0);
+    }
+
+    public boolean containsCard(Card card) {
+        for (Card tmpCard : cards) {
+            if (tmpCard.getRank() == card.getRank() && tmpCard.getSuit() == card.getSuit())
+                return true;
+        }
+        return false;
     }
 
 }

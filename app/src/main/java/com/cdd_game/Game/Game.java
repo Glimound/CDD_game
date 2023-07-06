@@ -30,6 +30,7 @@ public class Game {
     private int playerNum;
     private int gameTurn;
     private CardGroup previousCards;
+    private Player previousCardsOwner;
 
     private Game(String gameID, CardPool initialCards, CardPool discardCards, Rule rule , ArrayList<Player> players) {
         this.gameID = gameID;
@@ -40,6 +41,7 @@ public class Game {
         this.playerNum = players.size();
         this.gameTurn = 0;
         this.previousCards = null;
+        this.previousCardsOwner = null;
     }
 
     /**
@@ -232,5 +234,13 @@ public class Game {
 
     public void setPreviousCards(CardGroup previousCards) {
         this.previousCards = previousCards;
+    }
+
+    public Player getPreviousCardsOwner() {
+        return previousCardsOwner;
+    }
+
+    public void setPreviousCardsOwner(Player previousCardsOwner) {
+        this.previousCardsOwner = previousCardsOwner;
     }
 }
