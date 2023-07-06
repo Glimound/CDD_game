@@ -11,16 +11,17 @@ import android.widget.TextView;
 import com.cdd_game.Player.Player;
 import com.cdd_game.R;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 public class ChatAdapter extends BaseAdapter {
 
     private Context mContext;
-    private LinkedList<ChatData> myData;
+    private ArrayList<ChatData> myData;
     private Player player;
     public ChatAdapter() {}
 
-    public ChatAdapter(LinkedList<ChatData> myData, Context mContext,Player player) {
+    public ChatAdapter(ArrayList<ChatData> myData, Context mContext,Player player) {
         this.myData = myData;
         this.mContext = mContext;
         this.player=player;

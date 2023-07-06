@@ -10,10 +10,10 @@
 
     <ImageButton
         android:id="@+id/imageButton3"
-        android:visibility="invisible"
         android:layout_width="62dp"
         android:layout_height="45dp"
         android:backgroundTint="@color/cardview_shadow_end_color"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.04"
@@ -25,10 +25,10 @@
 
     <ImageButton
         android:id="@+id/imageButton2"
-        android:visibility="invisible"
         android:layout_width="69dp"
         android:layout_height="50dp"
         android:backgroundTint="@color/cardview_shadow_end_color"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.45"

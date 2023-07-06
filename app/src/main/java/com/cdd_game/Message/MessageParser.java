@@ -269,7 +269,7 @@ public class MessageParser {
                         activity.imageF2.setVisibility(View.INVISIBLE);
                         activity.imageF3.setVisibility(View.INVISIBLE);
                         activity.imageF4.setVisibility(View.INVISIBLE);
-                        if(nickNameOfPlayerToPlayCards==activity.player.getNickName()){
+                        if(nickNameOfPlayerToPlayCards.equals(activity.player.getNickName())){
                             activity.imageButton2.setVisibility(View.VISIBLE);
                             activity.imageButton3.setVisibility(View.VISIBLE);
                         }else{
@@ -311,7 +311,7 @@ public class MessageParser {
                 break;
 
             case NEXT_TURN:
-                MsgPlayCard tmpMsg6 = (MsgPlayCard) msg;
+                MsgNextTurn tmpMsg6 = (MsgNextTurn) msg;
                 if (activity.state == State.CLIENT_PLAYING) {
                     Log.d("Message", "Client receive next turn message");
                     // TODO: 下一回合，更新UI（如果轮到自己出牌，则显示出牌和跳过按钮）
@@ -322,7 +322,7 @@ public class MessageParser {
                     activity.imageF2.setVisibility(View.INVISIBLE);
                     activity.imageF3.setVisibility(View.INVISIBLE);
                     activity.imageF4.setVisibility(View.INVISIBLE);
-                    if(nickNameOfPlayerToPlayCards==activity.player.getNickName()){
+                    if(nickNameOfPlayerToPlayCards.equals(activity.player.getNickName())){
                         activity.imageButton2.setVisibility(View.VISIBLE);
                         activity.imageButton3.setVisibility(View.VISIBLE);
                     }else{
@@ -369,7 +369,7 @@ public class MessageParser {
                     activity.imageF2.setVisibility(View.INVISIBLE);
                     activity.imageF3.setVisibility(View.INVISIBLE);
                     activity.imageF4.setVisibility(View.INVISIBLE);
-                    if(nickNameOfPlayerToPlayCards==activity.player.getNickName()){
+                    if(nickNameOfPlayerToPlayCards.equals(activity.player.getNickName())){
                         activity.imageButton2.setVisibility(View.VISIBLE);
                         activity.imageButton3.setVisibility(View.VISIBLE);
                     }else{

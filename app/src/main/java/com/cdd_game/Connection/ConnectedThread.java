@@ -50,7 +50,7 @@ public class ConnectedThread extends Thread {
     }
 
     public void run() {
-        mmBuffer = new byte[4096];
+        mmBuffer = new byte[8192];
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         int numBytes = 0; // bytes returned from read()
 
@@ -61,7 +61,7 @@ public class ConnectedThread extends Thread {
                 while ((numBytes = mmInStream.read(mmBuffer)) > -1) {
                     baos.write(mmBuffer, 0, numBytes);
                     baos.flush();
-
+                    Thread.sleep(200);
                     if (mmInStream.available() == 0)
                         break;
                 }
@@ -81,6 +81,8 @@ public class ConnectedThread extends Thread {
             } catch (IOException e) {
                 Log.e("Bluetooth", "Input stream was disconnected", e);
                 break;
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
             }
         }
     }

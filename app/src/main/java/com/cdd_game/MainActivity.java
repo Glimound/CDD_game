@@ -364,9 +364,7 @@ public class MainActivity extends AppCompatActivity {
         imageC1=this.findViewById(R.id.c1);
         imageD1=this.findViewById(R.id.d1);
 
-        imageF2=this.findViewById(R.id.flag2);
-        imageF3=this.findViewById(R.id.flag3);
-        imageF4=this.findViewById(R.id.flag4);
+
         if(state==State.SERVER_WAITING){
             imageA.setVisibility(View.VISIBLE);
         }
@@ -497,7 +495,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void game(){
-
+        imageF2=this.findViewById(R.id.flag2);
+        imageF3=this.findViewById(R.id.flag3);
+        imageF4=this.findViewById(R.id.flag4);
         HashMap<Integer,String>imageMap=new HashMap<>();
 
         imageButton2=(ImageButton) findViewById(R.id.imageButton2);
@@ -506,8 +506,8 @@ public class MainActivity extends AppCompatActivity {
 
         /**
          * 消息按钮，离开按钮，聊天框的布局文件
-         *
-          */
+         */
+        chatAdapter=new ChatAdapter(chatList,this,player);
         ImageButton messageButton = findViewById(R.id.messageButton);
         ImageButton exitButton=findViewById(R.id.exit);
         Button sendButton=findViewById(R.id.send_button);
@@ -551,11 +551,42 @@ public class MainActivity extends AppCompatActivity {
         int liftDistance=40;
 
         String nickNameOfPlayerToPlayCards = Game.getGameInstance().getPlayerToPlayCard().getNickName();
-        if (!nickNameOfPlayerToPlayCards.equals(player.getNickName())) {
-            // 若第一个出牌的人不为自己
-            // TODO: 隐藏自己的出牌按钮和跳过按钮
+
+        // 显示轮到的玩家
+        imageButton2.setVisibility(View.INVISIBLE);
+        imageButton3.setVisibility(View.INVISIBLE);
+        imageF2.setVisibility(View.INVISIBLE);
+        imageF3.setVisibility(View.INVISIBLE);
+        imageF4.setVisibility(View.INVISIBLE);
+        if(nickNameOfPlayerToPlayCards.equals(player.getNickName())){
+            imageButton2.setVisibility(View.VISIBLE);
+            imageButton3.setVisibility(View.VISIBLE);
+        }else{
+            Player curPlayer=GameRoom.getGameRoomInstance().getPlayerByNickName(nickNameOfPlayerToPlayCards);
+            int num=GameRoom.getGameRoomInstance().getPlayers().indexOf(curPlayer);
+            int num1=GameRoom.getGameRoomInstance().getPlayers().indexOf(player);
+            int offset=num-num1;
+            switch(offset){
+                case 1:
+                    imageF2.setVisibility(View.VISIBLE);
+                    break;
+                case 2:
+                    imageF3.setVisibility(View.VISIBLE);
+                    break;
+                case 3:
+                    imageF4.setVisibility(View.VISIBLE);
+                    break;
+                case -1:
+                    imageF4.setVisibility(View.VISIBLE);
+                    break;
+                case -2:
+                    imageF3.setVisibility(View.VISIBLE);
+                    break;
+                case -3:
+                    imageF2.setVisibility(View.VISIBLE);
+                    break;
+            }
         }
-        // TODO: 显示轮到的玩家
 
         for(int i=0;i<13;i++){
             ImageButton imageButton=new ImageButton(this);
@@ -623,10 +654,10 @@ public class MainActivity extends AppCompatActivity {
                     connector.getConnectedThreadOfClient().write(msg);
                     Log.d("Message", "Client sent next turn message to server.");
                 } else if (state == State.SERVER_PLAYING) {
-                    for (Player player : Game.getGameInstance().getPlayers()) {
-                        if (!player.getNickName().equals(player.getNickName())) {
-                            connector.getConnectedThreadsOfServer().get(player.getNickName()).write(msg);
-                            Log.d("Message", "Server sent next turn message to " + player.getNickName() + ".");
+                    for (Player tmpPlayer : Game.getGameInstance().getPlayers()) {
+                        if (!tmpPlayer.getNickName().equals(player.getNickName())) {
+                            connector.getConnectedThreadsOfServer().get(tmpPlayer.getNickName()).write(msg);
+                            Log.d("Message", "Server sent next turn message to " + tmpPlayer.getNickName() + ".");
                         }
                     }
                 }
@@ -701,11 +732,11 @@ public class MainActivity extends AppCompatActivity {
                         Log.d("Message", "Client sent play card message to server." + "\n\tPlayer: "
                                 + player.getNickName() + "\n\tCards: " + cardGroup.toString());
                     } else if (state == State.SERVER_PLAYING) {
-                        for (Player player : Game.getGameInstance().getPlayers()) {
-                            if (!player.getNickName().equals(player.getNickName())) {
-                                connector.getConnectedThreadsOfServer().get(player.getNickName()).write(msg);
+                        for (Player tmpPlayer : Game.getGameInstance().getPlayers()) {
+                            if (!tmpPlayer.getNickName().equals(player.getNickName())) {
+                                connector.getConnectedThreadsOfServer().get(tmpPlayer.getNickName()).write(msg);
                                 Log.d("Message", "Server sent play card message to "
-                                        + player.getNickName() + ".\n\tPlayer: " + player.getNickName()
+                                        + tmpPlayer.getNickName() + ".\n\tPlayer: " + player.getNickName()
                                         + "\n\tCards: " + cardGroup.toString());
                             }
                         }
