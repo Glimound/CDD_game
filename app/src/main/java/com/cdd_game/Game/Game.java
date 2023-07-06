@@ -89,6 +89,7 @@ public class Game {
             for (int i = 0; i < size / 4; i++) {
                 player.getOwnCards().addCard(initialCards.removeLastCard());
             }
+            player.getOwnCards().sort();
         }
     }
 

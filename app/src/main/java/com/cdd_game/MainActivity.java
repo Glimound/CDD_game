@@ -454,8 +454,8 @@ public class MainActivity extends AppCompatActivity {
             imageButton.setLayoutParams(new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT));
-            String suit=cards.getCards().get(i).getSuit().getName();
-            String rank=cards.getCards().get(i).getRank().getName();
+            String suit=cards.getCards().get(i).getSuit().getName().toLowerCase();
+            String rank=cards.getCards().get(i).getRank().getName().toLowerCase();
             int resId=func.getDrawableId(this,suit.toLowerCase(),rank);
 
             imageButton.setImageResource(resId);
@@ -493,6 +493,44 @@ public class MainActivity extends AppCompatActivity {
                 break;
         }
     }
+
+    public void updateNextPlayerUI(String nickNameOfPlayerToPlayCards) {
+        imageButton2.setVisibility(View.INVISIBLE);
+        imageButton3.setVisibility(View.INVISIBLE);
+        imageF2.setVisibility(View.INVISIBLE);
+        imageF3.setVisibility(View.INVISIBLE);
+        imageF4.setVisibility(View.INVISIBLE);
+        if (nickNameOfPlayerToPlayCards.equals(player.getNickName())) {
+            imageButton2.setVisibility(View.VISIBLE);
+            imageButton3.setVisibility(View.VISIBLE);
+        } else {
+            Player curPlayer = GameRoom.getGameRoomInstance().getPlayerByNickName(nickNameOfPlayerToPlayCards);
+            int num2 = GameRoom.getGameRoomInstance().getPlayers().indexOf(curPlayer);
+            int num3 = GameRoom.getGameRoomInstance().getPlayers().indexOf(player);
+            int offset = num2 - num3;
+            switch (offset) {
+                case 1:
+                    imageF2.setVisibility(View.VISIBLE);
+                    break;
+                case 2:
+                    imageF3.setVisibility(View.VISIBLE);
+                    break;
+                case 3:
+                    imageF4.setVisibility(View.VISIBLE);
+                    break;
+                case -1:
+                    imageF4.setVisibility(View.VISIBLE);
+                    break;
+                case -2:
+                    imageF3.setVisibility(View.VISIBLE);
+                    break;
+                case -3:
+                    imageF2.setVisibility(View.VISIBLE);
+                    break;
+            }
+        }
+    }
+
 
     public void game(){
         imageF2=this.findViewById(R.id.flag2);
@@ -551,42 +589,8 @@ public class MainActivity extends AppCompatActivity {
         int liftDistance=40;
 
         String nickNameOfPlayerToPlayCards = Game.getGameInstance().getPlayerToPlayCard().getNickName();
-
         // 显示轮到的玩家
-        imageButton2.setVisibility(View.INVISIBLE);
-        imageButton3.setVisibility(View.INVISIBLE);
-        imageF2.setVisibility(View.INVISIBLE);
-        imageF3.setVisibility(View.INVISIBLE);
-        imageF4.setVisibility(View.INVISIBLE);
-        if(nickNameOfPlayerToPlayCards.equals(player.getNickName())){
-            imageButton2.setVisibility(View.VISIBLE);
-            imageButton3.setVisibility(View.VISIBLE);
-        }else{
-            Player curPlayer=GameRoom.getGameRoomInstance().getPlayerByNickName(nickNameOfPlayerToPlayCards);
-            int num=GameRoom.getGameRoomInstance().getPlayers().indexOf(curPlayer);
-            int num1=GameRoom.getGameRoomInstance().getPlayers().indexOf(player);
-            int offset=num-num1;
-            switch(offset){
-                case 1:
-                    imageF2.setVisibility(View.VISIBLE);
-                    break;
-                case 2:
-                    imageF3.setVisibility(View.VISIBLE);
-                    break;
-                case 3:
-                    imageF4.setVisibility(View.VISIBLE);
-                    break;
-                case -1:
-                    imageF4.setVisibility(View.VISIBLE);
-                    break;
-                case -2:
-                    imageF3.setVisibility(View.VISIBLE);
-                    break;
-                case -3:
-                    imageF2.setVisibility(View.VISIBLE);
-                    break;
-            }
-        }
+        updateNextPlayerUI(nickNameOfPlayerToPlayCards);
 
         for(int i=0;i<13;i++){
             ImageButton imageButton=new ImageButton(this);
@@ -660,46 +664,14 @@ public class MainActivity extends AppCompatActivity {
                             Log.d("Message", "Server sent next turn message to " + tmpPlayer.getNickName() + ".");
                         }
                     }
-
-                    Game.getGameInstance().gameTurnPlusOne();
-                    String nickNameOfPlayerToPlayCards = Game.getGameInstance().getPlayerToPlayCard().getNickName();
-                    imageButton2.setVisibility(View.INVISIBLE);
-                    imageButton3.setVisibility(View.INVISIBLE);
-                    imageF2.setVisibility(View.INVISIBLE);
-                    imageF3.setVisibility(View.INVISIBLE);
-                    imageF4.setVisibility(View.INVISIBLE);
-                    if(nickNameOfPlayerToPlayCards.equals(player.getNickName())){
-                        imageButton2.setVisibility(View.VISIBLE);
-                        imageButton3.setVisibility(View.VISIBLE);
-                    }else{
-                        Player curPlayer=GameRoom.getGameRoomInstance().getPlayerByNickName(nickNameOfPlayerToPlayCards);
-                        int num2=GameRoom.getGameRoomInstance().getPlayers().indexOf(curPlayer);
-                        int num3=GameRoom.getGameRoomInstance().getPlayers().indexOf(player);
-                        int offset=num2-num3;
-                        switch(offset){
-                            case 1:
-                                imageF2.setVisibility(View.VISIBLE);
-                                break;
-                            case 2:
-                                imageF3.setVisibility(View.VISIBLE);
-                                break;
-                            case 3:
-                                imageF4.setVisibility(View.VISIBLE);
-                                break;
-                            case -1:
-                                imageF4.setVisibility(View.VISIBLE);
-                                break;
-                            case -2:
-                                imageF3.setVisibility(View.VISIBLE);
-                                break;
-                            case -3:
-                                imageF2.setVisibility(View.VISIBLE);
-                                break;
-                        }
-                    }
                 }
+
+                Game.getGameInstance().gameTurnPlusOne();
+                String nickNameOfPlayerToPlayCards = Game.getGameInstance().getPlayerToPlayCard().getNickName();
+                updateNextPlayerUI(nickNameOfPlayerToPlayCards);
             }
         });
+
         imageButton3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -773,12 +745,6 @@ public class MainActivity extends AppCompatActivity {
                         connector.getConnectedThreadOfClient().write(msg);
                         Log.d("Message", "Client sent play card message to server." + "\n\tPlayer: "
                                 + player.getNickName() + "\n\tCards: " + cardGroup.toString());
-
-                        game.setPreviousCards(cardGroup);
-                        game.setPreviousCardsOwner(Game.getGameInstance().getPlayerByNickName(player.getNickName()));
-                        // 在本机的Game实例中删除该玩家的牌
-                        game.getPlayerByNickName(player.getNickName()).getOwnCards().removeCards(cardGroup);
-
                     } else if (state == State.SERVER_PLAYING) {
                         // 发送消息给客户端
                         for (Player tmpPlayer : Game.getGameInstance().getPlayers()) {
@@ -789,80 +755,23 @@ public class MainActivity extends AppCompatActivity {
                                         + "\n\tCards: " + cardGroup.toString());
                             }
                         }
+                    }
 
-                        try {
-                            Thread.sleep(500);
-                        } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
-                        }
+                    game.setPreviousCards(cardGroup);
+                    game.setPreviousCardsOwner(game.getPlayerByNickName(player.getNickName()));
+                    // 在本机的Game实例中删除牌
+                    game.getPlayerByNickName(player.getNickName()).getOwnCards().removeCards(cardGroup);
 
-                        game.setPreviousCards(cardGroup);
-                        game.setPreviousCardsOwner(Game.getGameInstance().getPlayerByNickName(player.getNickName()));
-                        // 在本机的Game实例中删除牌
-                        game.getPlayerByNickName(player.getNickName()).getOwnCards().removeCards(cardGroup);
-
-                        // 判断自己是否胜利
-                        if (game.getPlayerByNickName(player.getNickName()).getOwnCards().isEmpty()) {
-                            // 若自己的牌出完，发送游戏结束消息给所有客户端玩家
-                            MessageSchema endGameMsg = new MsgGameEnd(Calendar.getInstance().getTimeInMillis(),
-                                    player.getDeviceID(), player.getNickName(), player.getNickName());
-                            for (Player player : Game.getGameInstance().getPlayers()) {
-                                if (!player.getNickName().equals(player.getNickName())) {
-                                    connector.getConnectedThreadsOfServer().get(player.getNickName()).write(endGameMsg);
-                                    Log.d("Message", "Server sent end game message to " + player.getNickName() + ".");
-                                }
-                            }
-
-                            // 本机游戏结束，TODO: 切换界面至结算界面，在结算界面中computeScore, deleteGame
-                            GameRoom.getGameRoomInstance().setWinner(player);
-                        } else {
-                            // 未胜利，发送下一回合消息给所有客户端玩家
-                            MessageSchema nextTurnMsg = new MsgNextTurn(Calendar.getInstance().getTimeInMillis(),
-                                    player.getDeviceID(), player.getNickName());
-                            for (Player tmpPlayer : Game.getGameInstance().getPlayers()) {
-                                if (!tmpPlayer.getNickName().equals(player.getNickName())) {
-                                    connector.getConnectedThreadsOfServer().get(tmpPlayer.getNickName()).write(nextTurnMsg);
-                                    Log.d("Message", "Server sent next turn message to " + tmpPlayer.getNickName() + ".");
-                                }
-                            }
-
-                            Game.getGameInstance().gameTurnPlusOne();
-                            String nickNameOfPlayerToPlayCards = Game.getGameInstance().getPlayerToPlayCard().getNickName();
-                            imageButton2.setVisibility(View.INVISIBLE);
-                            imageButton3.setVisibility(View.INVISIBLE);
-                            imageF2.setVisibility(View.INVISIBLE);
-                            imageF3.setVisibility(View.INVISIBLE);
-                            imageF4.setVisibility(View.INVISIBLE);
-                            if (nickNameOfPlayerToPlayCards.equals(player.getNickName())) {
-                                imageButton2.setVisibility(View.VISIBLE);
-                                imageButton3.setVisibility(View.VISIBLE);
-                            } else {
-                                Player curPlayer = GameRoom.getGameRoomInstance().getPlayerByNickName(nickNameOfPlayerToPlayCards);
-                                int num2 = GameRoom.getGameRoomInstance().getPlayers().indexOf(curPlayer);
-                                int num3 = GameRoom.getGameRoomInstance().getPlayers().indexOf(player);
-                                int offset = num2 - num3;
-                                switch (offset) {
-                                    case 1:
-                                        imageF2.setVisibility(View.VISIBLE);
-                                        break;
-                                    case 2:
-                                        imageF3.setVisibility(View.VISIBLE);
-                                        break;
-                                    case 3:
-                                        imageF4.setVisibility(View.VISIBLE);
-                                        break;
-                                    case -1:
-                                        imageF4.setVisibility(View.VISIBLE);
-                                        break;
-                                    case -2:
-                                        imageF3.setVisibility(View.VISIBLE);
-                                        break;
-                                    case -3:
-                                        imageF2.setVisibility(View.VISIBLE);
-                                        break;
-                                }
-                            }
-                        }
+                    // 判断自己是否胜利
+                    if (game.getPlayerByNickName(player.getNickName()).getOwnCards().isEmpty()) {
+                        // 本机游戏结束，TODO: 切换界面至结算界面，在结算界面中computeScore, deleteGame
+                        GameRoom.getGameRoomInstance().setWinner(player);
+                    } else {
+                        // 本机游戏未结束
+                        game.gameTurnPlusOne();
+                        // 下一个出牌的玩家
+                        String nickNameOfPlayerToPlayCards = Game.getGameInstance().getPlayerToPlayCard().getNickName();
+                        updateNextPlayerUI(nickNameOfPlayerToPlayCards);
                     }
                     // 更新UI
                     for (int i = 0; i < children.size(); i++) {
@@ -888,23 +797,12 @@ public class MainActivity extends AppCompatActivity {
                     if (tempMap.size() == count) {
                         imageMap.putAll(tempMap);
                     }
-
-                    game.getPlayerByNickName(player.getNickName()).getOwnCards().removeCards(cardGroup);
-                    /** TODO: 更新UI中自己牌的张数
-                     * 其余玩家牌变少，仅为测试用，后续需修改
-                     * imageView2.setImageResource(func.getDrawableId(MainActivity.this,num));其中num为剩下牌的数量
-                     */
-
                 } else {
                     showToast("牌型不符合规则");
                     // TODO: 更新UI，显示牌型不符合规则
                 }
-
-
                 LinearLayout1.setGravity(View.TEXT_ALIGNMENT_CENTER);
-
             }
-
         });
     }
 

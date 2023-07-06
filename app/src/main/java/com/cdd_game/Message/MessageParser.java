@@ -221,6 +221,7 @@ public class MessageParser {
 
             case PLAY_CARD:
                 MsgPlayCard tmpMsg5 = (MsgPlayCard) msg;
+                Game game = Game.getGameInstance();
                 if (activity.state == State.SERVER_PLAYING) {
                     Log.d("Message", "Server receive play card message. \n\tPlayer: "
                             + tmpMsg5.nickName + "\n\tCards: " + tmpMsg5.cardGroup.toString());
@@ -232,95 +233,25 @@ public class MessageParser {
                             Log.d("Message", "Server sent player play card message to " + player.getNickName() + ".");
                         }
                     }
-                    Game.getGameInstance().setPreviousCards(tmpMsg5.cardGroup);
-                    Game.getGameInstance().setPreviousCardsOwner(Game.getGameInstance().getPlayerByNickName(tmpMsg5.nickName));
-                    // 在本机的Game实例中删除该玩家的牌
-                    Game.getGameInstance().getPlayerByNickName(tmpMsg5.nickName).getOwnCards().removeCards(tmpMsg5.cardGroup);
-                    // 更新UI中该玩家牌的张数
-                    activity.showCardsUsed(tmpMsg5.nickName, tmpMsg5.cardGroup);
-
-                    // 判断该玩家是否胜利
-                    if (Game.getGameInstance().getPlayerByNickName(tmpMsg5.nickName).getOwnCards().isEmpty()) {
-                        // 若该玩家的牌出完，发送游戏结束消息给所有客户端玩家
-                        try {
-                            Thread.sleep(500);
-                        } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
-                        }
-                        MessageSchema endGameMsg = new MsgGameEnd(Calendar.getInstance().getTimeInMillis(),
-                                activity.player.getDeviceID(), activity.player.getNickName(), tmpMsg5.nickName);
-                        for (Player player : Game.getGameInstance().getPlayers()) {
-                            if (!player.getNickName().equals(activity.player.getNickName())) {
-                                activity.connector.getConnectedThreadsOfServer().get(player.getNickName()).write(endGameMsg);
-                                Log.d("Message", "Server sent end game message to " + player.getNickName() + ".");
-                            }
-                        }
-
-                        // 本机游戏结束，TODO: 切换界面至结算界面，在结算界面中computeScore, deleteGame
-                        GameRoom.getGameRoomInstance().setWinner(Game.getGameInstance().getPlayerByNickName(tmpMsg5.nickName));
-                    } else {
-                        // 该玩家未胜利，发送下一回合消息给所有客户端玩家
-                        try {
-                            Thread.sleep(500);
-                        } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
-                        }
-                        MessageSchema nextTurnMsg = new MsgNextTurn(Calendar.getInstance().getTimeInMillis(),
-                                activity.player.getDeviceID(), activity.player.getNickName());
-                        for (Player player : Game.getGameInstance().getPlayers()) {
-                            if (!player.getNickName().equals(activity.player.getNickName())) {
-                                activity.connector.getConnectedThreadsOfServer().get(player.getNickName()).write(nextTurnMsg);
-                                Log.d("Message", "Server sent next turn message to " + player.getNickName() + ".");
-                            }
-                        }
-                        // TODO: 下一回合，更新UI（如果轮到自己出牌，则显示出牌和跳过按钮）
-                        Game.getGameInstance().gameTurnPlusOne();
-                        String nickNameOfPlayerToPlayCards = Game.getGameInstance().getPlayerToPlayCard().getNickName();
-                        activity.imageButton2.setVisibility(View.INVISIBLE);
-                        activity.imageButton3.setVisibility(View.INVISIBLE);
-                        activity.imageF2.setVisibility(View.INVISIBLE);
-                        activity.imageF3.setVisibility(View.INVISIBLE);
-                        activity.imageF4.setVisibility(View.INVISIBLE);
-                        if(nickNameOfPlayerToPlayCards.equals(activity.player.getNickName())){
-                            activity.imageButton2.setVisibility(View.VISIBLE);
-                            activity.imageButton3.setVisibility(View.VISIBLE);
-                        }else{
-                            Player curPlayer=GameRoom.getGameRoomInstance().getPlayerByNickName(nickNameOfPlayerToPlayCards);
-                            int num=GameRoom.getGameRoomInstance().getPlayers().indexOf(curPlayer);
-                            int num1=GameRoom.getGameRoomInstance().getPlayers().indexOf(activity.player);
-                            int offset=num-num1;
-                            switch(offset){
-                                case 1:
-                                    activity.imageF2.setVisibility(View.VISIBLE);
-                                    break;
-                                case 2:
-                                    activity.imageF3.setVisibility(View.VISIBLE);
-                                    break;
-                                case 3:
-                                    activity.imageF4.setVisibility(View.VISIBLE);
-                                    break;
-                                case -1:
-                                    activity.imageF4.setVisibility(View.VISIBLE);
-                                    break;
-                                case -2:
-                                    activity.imageF3.setVisibility(View.VISIBLE);
-                                    break;
-                                case -3:
-                                    activity.imageF2.setVisibility(View.VISIBLE);
-                                    break;
-                            }
-                        }
-
-                    }
                 } else if (activity.state == State.CLIENT_PLAYING) {
                     Log.d("Message", "Client receive play card message. \n\tPlayer: "
                             + tmpMsg5.nickName + "\n\tCards: " + tmpMsg5.cardGroup.toString());
-                    Game.getGameInstance().setPreviousCards(tmpMsg5.cardGroup);
-                    Game.getGameInstance().setPreviousCardsOwner(Game.getGameInstance().getPlayerByNickName(tmpMsg5.nickName));
-                    // 在本机的Game实例中删除该玩家的牌
-                    Game.getGameInstance().getPlayerByNickName(tmpMsg5.nickName).getOwnCards().removeCards(tmpMsg5.cardGroup);
-                    // 更新UI中该玩家牌的张数
-                    activity.showCardsUsed(tmpMsg5.nickName, tmpMsg5.cardGroup);
+                }
+                game.setPreviousCards(tmpMsg5.cardGroup);
+                game.setPreviousCardsOwner(game.getPlayerByNickName(tmpMsg5.nickName));
+                // 在本机的Game实例中删除该玩家的牌
+                game.getPlayerByNickName(tmpMsg5.nickName).getOwnCards().removeCards(tmpMsg5.cardGroup);
+                // 更新UI中该玩家牌的张数
+                activity.showCardsUsed(tmpMsg5.nickName, tmpMsg5.cardGroup);
+
+                // 判断该玩家是否胜利
+                if (game.getPlayerByNickName(tmpMsg5.nickName).getOwnCards().isEmpty()) {
+                    // 本机游戏结束，TODO: 切换界面至结算界面，在结算界面中computeScore, deleteGame
+                    GameRoom.getGameRoomInstance().setWinner(game.getPlayerByNickName(tmpMsg5.nickName));
+                } else {
+                    game.gameTurnPlusOne();
+                    String nickNameOfPlayerToPlayCards = game.getPlayerToPlayCard().getNickName();
+                    activity.updateNextPlayerUI(nickNameOfPlayerToPlayCards);
                 }
                 break;
 
@@ -328,91 +259,20 @@ public class MessageParser {
                 MsgNextTurn tmpMsg6 = (MsgNextTurn) msg;
                 if (activity.state == State.CLIENT_PLAYING) {
                     Log.d("Message", "Client receive next turn message.");
-                    // TODO: 下一回合，更新UI（如果轮到自己出牌，则显示出牌和跳过按钮）
-                    Game.getGameInstance().gameTurnPlusOne();
-                    String nickNameOfPlayerToPlayCards = Game.getGameInstance().getPlayerToPlayCard().getNickName();
-                    activity.imageButton2.setVisibility(View.INVISIBLE);
-                    activity.imageButton3.setVisibility(View.INVISIBLE);
-                    activity.imageF2.setVisibility(View.INVISIBLE);
-                    activity.imageF3.setVisibility(View.INVISIBLE);
-                    activity.imageF4.setVisibility(View.INVISIBLE);
-                    if(nickNameOfPlayerToPlayCards.equals(activity.player.getNickName())){
-                        activity.imageButton2.setVisibility(View.VISIBLE);
-                        activity.imageButton3.setVisibility(View.VISIBLE);
-                    }else{
-                        Player curPlayer=GameRoom.getGameRoomInstance().getPlayerByNickName(nickNameOfPlayerToPlayCards);
-                        int num=GameRoom.getGameRoomInstance().getPlayers().indexOf(curPlayer);
-                        int num1=GameRoom.getGameRoomInstance().getPlayers().indexOf(activity.player);
-                        int offset=num-num1;
-                        switch(offset){
-                            case 1:
-                                activity.imageF2.setVisibility(View.VISIBLE);
-                                break;
-                            case 2:
-                                activity.imageF3.setVisibility(View.VISIBLE);
-                                break;
-                            case 3:
-                                activity.imageF4.setVisibility(View.VISIBLE);
-                                break;
-                            case -1:
-                                activity.imageF4.setVisibility(View.VISIBLE);
-                                break;
-                            case -2:
-                                activity.imageF3.setVisibility(View.VISIBLE);
-                                break;
-                            case -3:
-                                activity.imageF2.setVisibility(View.VISIBLE);
-                                break;
-                        }
-                    }
-
                 } else if (activity.state == State.SERVER_PLAYING) {
                     Log.d("Message", "Server receive next turn message");
                     for (Player player : Game.getGameInstance().getPlayers()) {
-                        if (!player.getNickName().equals(activity.player.getNickName())) {
+                        if (!player.getNickName().equals(activity.player.getNickName()) &&
+                                !player.getNickName().equals(tmpMsg6.nickName)) {
                             activity.connector.getConnectedThreadsOfServer().get(player.getNickName()).write(msg);
                             Log.d("Message", "Server sent next turn message to " + player.getNickName() + ".");
                         }
                     }
-                    // TODO: 下一回合，更新UI（如果轮到自己出牌，则显示出牌和跳过按钮）
-                    Game.getGameInstance().gameTurnPlusOne();
-                    String nickNameOfPlayerToPlayCards = Game.getGameInstance().getPlayerToPlayCard().getNickName();
-                    activity.imageButton2.setVisibility(View.INVISIBLE);
-                    activity.imageButton3.setVisibility(View.INVISIBLE);
-                    activity.imageF2.setVisibility(View.INVISIBLE);
-                    activity.imageF3.setVisibility(View.INVISIBLE);
-                    activity.imageF4.setVisibility(View.INVISIBLE);
-                    if(nickNameOfPlayerToPlayCards.equals(activity.player.getNickName())){
-                        activity.imageButton2.setVisibility(View.VISIBLE);
-                        activity.imageButton3.setVisibility(View.VISIBLE);
-                    }else{
-                        Player curPlayer=GameRoom.getGameRoomInstance().getPlayerByNickName(nickNameOfPlayerToPlayCards);
-                        int num=GameRoom.getGameRoomInstance().getPlayers().indexOf(curPlayer);
-                        int num1=GameRoom.getGameRoomInstance().getPlayers().indexOf(activity.player);
-                        int offset=num-num1;
-                        switch(offset){
-                            case 1:
-                                activity.imageF2.setVisibility(View.VISIBLE);
-                                break;
-                            case 2:
-                                activity.imageF3.setVisibility(View.VISIBLE);
-                                break;
-                            case 3:
-                                activity.imageF4.setVisibility(View.VISIBLE);
-                                break;
-                            case -1:
-                                activity.imageF4.setVisibility(View.VISIBLE);
-                                break;
-                            case -2:
-                                activity.imageF3.setVisibility(View.VISIBLE);
-                                break;
-                            case -3:
-                                activity.imageF2.setVisibility(View.VISIBLE);
-                                break;
-                        }
-                    }
-
                 }
+                // TODO: 下一回合，更新UI（如果轮到自己出牌，则显示出牌和跳过按钮）
+                Game.getGameInstance().gameTurnPlusOne();
+                String nickNameOfPlayerToPlayCards = Game.getGameInstance().getPlayerToPlayCard().getNickName();
+                activity.updateNextPlayerUI(nickNameOfPlayerToPlayCards);
                 break;
 
             case GAME_END:
