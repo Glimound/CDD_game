@@ -536,7 +536,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if(!inputMessage.isEmpty()){
                     //TODO:将头像更换为对应头像
-                    ChatData myChat=new ChatData(R.drawable.back,inputMessage,0);
+                    ChatData myChat=new ChatData(inputMessage,player.getNickName());
                     receiveChat(myChat,listView);
                 }
             }

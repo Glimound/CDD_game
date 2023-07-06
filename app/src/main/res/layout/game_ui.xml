@@ -270,13 +270,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="发送"
-            android:textColorHighlight="#673AB7" />
+            android:textColorHighlight="#3A64B7" />
 
     </LinearLayout>
 
 </LinearLayout>
-
-
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,25 +1,17 @@
 package com.cdd_game.Chat;
 
+import android.provider.ContactsContract;
+
 public class ChatData {
-    private int imageId;
     private String text;
-    private int type;
+    private String nickName;
 
     public ChatData() {
     }
 
-    public ChatData(int imageId, String text, int type) {
-        this.imageId = imageId;
+    public ChatData( String text,String nickName) {
         this.text = text;
-        this.type = type;
-    }
-
-    public int getImageId() {
-        return imageId;
-    }
-
-    public void setImageId(int imageId) {
-        this.imageId = imageId;
+        this.nickName = nickName;
     }
 
     public String getText() {
@@ -30,12 +22,12 @@ public class ChatData {
         this.text = text;
     }
 
-    public int getType() {
-        return type;
+    public String  getNickName() {
+        return nickName;
     }
 
-    public void setType(int type) {
-        this.type = type;
+    public void setNickName(int type) {
+        this.nickName = nickName;
     }
 }
 

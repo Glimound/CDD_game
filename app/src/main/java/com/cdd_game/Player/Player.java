@@ -34,7 +34,7 @@ public class Player {
      */
     public void playCard(CardGroup cards) {
         if (Game.getGameInstance().getRule().validate(cards)) {
-            if (Game.getGameInstance().getRule().compareToCards(cards, Game.getGameInstance().getLastCards())) {
+            if (Game.getGameInstance().getRule().compareToCards(cards, Game.getGameInstance().getPreviousCards())) {
                 //将要出的牌从手牌中去除，加入到弃牌堆中,并设置为上家出的牌
                 ownCards.removeCards(cards);
                 Game.getGameInstance().getDiscardCards().addCards(cards);
