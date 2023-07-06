@@ -181,7 +181,7 @@ public class Game {
     /**
      * 返回牌局中每个玩家的最终得分
      */
-    private HashMap<Player, Integer> getGameScore() throws Exception {
+    public HashMap<Player, Integer> getGameScore() throws Exception {
         HashMap<Player, CardPool> remainingCards = new HashMap<>();
         for (Player player : players) {
             remainingCards.put(player, player.getOwnCards());

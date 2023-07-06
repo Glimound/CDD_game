@@ -248,6 +248,7 @@ public class MessageParser {
                 if (game.getPlayerByNickName(tmpMsg5.nickName).getOwnCards().isEmpty()) {
                     // 本机游戏结束，TODO: 切换界面至结算界面，在结算界面中computeScore, deleteGame
                     GameRoom.getGameRoomInstance().setWinner(game.getPlayerByNickName(tmpMsg5.nickName));
+                    activity.gameSettlement();
                 } else {
                     game.gameTurnPlusOne();
                     String nickNameOfPlayerToPlayCards = game.getPlayerToPlayCard().getNickName();
@@ -281,6 +282,7 @@ public class MessageParser {
                     Log.d("Message", "Client receive game end message. Winner: " + tmpMsg7.winnerNickName);
                     // 本机游戏结束，TODO: 切换界面至结算界面，在结算界面中computeScore, deleteGame
                     GameRoom.getGameRoomInstance().setWinner(Game.getGameInstance().getPlayerByNickName(tmpMsg7.winnerNickName));
+                    activity.gameSettlement();
                 }
                 break;
         }

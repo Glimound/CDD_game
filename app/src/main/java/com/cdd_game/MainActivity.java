@@ -37,6 +37,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.TableLayout;
+import android.widget.TableRow;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cdd_game.Card.Card;
@@ -766,6 +769,7 @@ public class MainActivity extends AppCompatActivity {
                     if (game.getPlayerByNickName(player.getNickName()).getOwnCards().isEmpty()) {
                         // 本机游戏结束，TODO: 切换界面至结算界面，在结算界面中computeScore, deleteGame
                         GameRoom.getGameRoomInstance().setWinner(player);
+                        gameSettlement();
                     } else {
                         // 本机游戏未结束
                         game.gameTurnPlusOne();
@@ -849,24 +853,64 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void gameSettlement(){
-            Button continue_button=(Button)this.findViewById(R.id.continue_button);//创建房间
-            Button end_button=(Button)this.findViewById(R.id.end_button);  //加入房间
+    public void gameSettlement(){
+        state = State.SETTLEMENT;
+        setContentView(R.layout.settlement);
+        /**
+         * 将玩家名保存在链表中playerNames，对应的剩余牌数和得分保存在数组remainingCards和scores中
+         */
+        ArrayList<String> playerNames=new ArrayList<>();
+        int[] remainingCards=new int[4];
+        int[] scores=new int[4];
+        int count=0;
+        for(Player tmp_player:Game.getGameInstance().getPlayers()){
+            playerNames.add(tmp_player.getNickName());
+            remainingCards[count]=tmp_player.getOwnCards().size();
+            try {
+                scores[count]=Game.getGameInstance().getGameScore().get(tmp_player);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+            count++;
+        }
+        // 查找得分表
+        TableLayout tableLayout = findViewById(R.id.score_table);
+        // 设置TableRow中的TextView文本
+        for (int i = 0; i < playerNames.size(); i++) {
+            String playerName = playerNames.get(i);
+            int cards = remainingCards[i];
+            int score = scores[i];
 
-            continue_button.setOnClickListener(new View.OnClickListener(){
-                @Override
-                public void onClick(View v){
-                    setContentView(R.layout.game_ui);
-                    game();
-                }
-            });
-            end_button.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    setContentView(R.layout.activity_main);
-                    idle();
-                }
-            });
+            // 获取当前TableRow
+            TableRow tableRow = (TableRow) tableLayout.getChildAt(i+1);
+            // 查找TableRow中的TextView
+            TextView playerNameTextView = (TextView) tableRow.getChildAt(0);
+            TextView remainingCardsTextView = (TextView) tableRow.getChildAt(1);
+            TextView scoreTextView = (TextView) tableRow.getChildAt(2);
+
+            // 设置文本
+            playerNameTextView.setText(playerName);
+            remainingCardsTextView.setText(String.valueOf(cards));
+            scoreTextView.setText(String.valueOf(score));
+        }
+
+        Button continue_button=this.findViewById(R.id.continue_button);//创建房间
+        Button end_button=this.findViewById(R.id.end_button);  //加入房间
+
+        continue_button.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                setContentView(R.layout.waiting1);
+                waiting();
+            }
+        });
+        end_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setContentView(R.layout.activity_main);
+                idle();
+            }
+        });
     }
     public void receiveChat(ChatData chatData,ListView listView){
         //将新消息发送到数据源中

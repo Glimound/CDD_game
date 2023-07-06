@@ -7,7 +7,7 @@
 
     <TextView
         android:id="@+id/result_text"
-        android:text="胜利/失败"
+        android:text="结算"
         android:textSize="24sp"
         android:textColor="@android:color/black"
         android:layout_gravity="center"
