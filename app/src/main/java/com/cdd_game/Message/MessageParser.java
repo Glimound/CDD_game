@@ -59,13 +59,16 @@ public class MessageParser {
                     int num=GameRoom.getGameRoomInstance().getPlayers().indexOf(playerAdd);
                     switch(num){
                         case 1:
-                            activity.imageB1.setVisibility(View.VISIBLE);
+                            activity.imageD1.setVisibility(View.VISIBLE);
                             break;
                         case 2:
+                            activity.imageD1.setVisibility(View.VISIBLE);
                             activity.imageC1.setVisibility(View.VISIBLE);
                             break;
                         case 3:
+                            activity.imageB1.setVisibility(View.VISIBLE);
                             activity.imageD1.setVisibility(View.VISIBLE);
+                            activity.imageC1.setVisibility(View.VISIBLE);
                             break;
                     }
 
@@ -105,8 +108,8 @@ public class MessageParser {
             case PLAYER_JOINED:
                 MsgPlayerJoined tmpMsg2 = (MsgPlayerJoined) msg;
                 if (activity.state == State.CLIENT_WAITING || activity.state == State.CLIENT_READY) {
-                    Log.d("Message", "Client receive player joined message. Joined player: " + tmpMsg2.nickName);
-                    Player playerAdd=new Player(tmpMsg2.deviceID, tmpMsg2.nickName);
+                    Log.d("Message", "Client receive player joined message. Joined player: " + tmpMsg2.joinedPlayerNickName);
+                    Player playerAdd=new Player(tmpMsg2.joinedPlayerID, tmpMsg2.joinedPlayerNickName);
                     GameRoom.getGameRoomInstance().addPlayer(playerAdd);
                     // TODO: 更新UI，显示加入的玩家
                     int num=GameRoom.getGameRoomInstance().getPlayers().indexOf(playerAdd);
@@ -122,6 +125,15 @@ public class MessageParser {
                         case 3:
                             activity.imageD1.setVisibility(View.VISIBLE);
                             break;
+                        case -3:
+                            activity.imageB1.setVisibility(View.VISIBLE);
+                            break;
+                        case -2:
+                            activity.imageC1.setVisibility(View.VISIBLE);
+                            break;
+                        case -1:
+                            activity.imageD1.setVisibility(View.VISIBLE);
+                            break;
                     }
                 }
                 break;
@@ -130,9 +142,9 @@ public class MessageParser {
                 MsgReady tmpMsg3 = (MsgReady) msg;
                 if (activity.state == State.SERVER_WAITING) {
                     Log.d("Message", "Server receive player ready message. Ready player: " + tmpMsg3.nickName);
-                    GameRoom.getGameRoomInstance().getPlayerByNickName(msg.nickName).setReady(true);
+                    GameRoom.getGameRoomInstance().getPlayerByNickName(tmpMsg3.nickName).setReady(true);
                     // TODO: 更新UI，显示该玩家的已准备状态
-                    Player tempPlayer=GameRoom.getGameRoomInstance().getPlayerByNickName(msg.nickName);
+                    Player tempPlayer=GameRoom.getGameRoomInstance().getPlayerByNickName(tmpMsg3.nickName);
                     int num=GameRoom.getGameRoomInstance().getPlayers().indexOf(tempPlayer);
                     int num1=GameRoom.getGameRoomInstance().getPlayers().indexOf(activity.player);
                     int offset=num-num1;
@@ -146,6 +158,15 @@ public class MessageParser {
                         case 3:
                             activity.imageD.setVisibility(View.VISIBLE);
                             break;
+                        case -1:
+                            activity.imageD.setVisibility(View.VISIBLE);
+                            break;
+                        case -2:
+                            activity.imageC.setVisibility(View.VISIBLE);
+                            break;
+                        case -3:
+                            activity.imageB.setVisibility(View.VISIBLE);
+                            break;
                     }
 
                     for (Player player : GameRoom.getGameRoomInstance().getPlayers()) {
@@ -157,9 +178,9 @@ public class MessageParser {
                     }
                 } else if (activity.state == State.CLIENT_WAITING || activity.state == State.CLIENT_READY) {
                     Log.d("Message", "Client receive player ready message. Ready player: " + tmpMsg3.nickName);
-                    GameRoom.getGameRoomInstance().getPlayerByNickName(msg.nickName).setReady(true);
+                    GameRoom.getGameRoomInstance().getPlayerByNickName(tmpMsg3.nickName).setReady(true);
                     // TODO: 更新UI，显示该玩家的已准备状态
-                    Player tempPlayer=GameRoom.getGameRoomInstance().getPlayerByNickName(msg.nickName);
+                    Player tempPlayer=GameRoom.getGameRoomInstance().getPlayerByNickName(tmpMsg3.nickName);
                     int num=GameRoom.getGameRoomInstance().getPlayers().indexOf(tempPlayer);
                     int num1=GameRoom.getGameRoomInstance().getPlayers().indexOf(activity.player);
                     int offset=num-num1;

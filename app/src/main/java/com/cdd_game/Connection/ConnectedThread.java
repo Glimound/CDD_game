@@ -12,11 +12,13 @@ import com.google.gson.stream.JsonReader;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 
 public class ConnectedThread extends Thread {
     private final BluetoothSocket mmSocket;
@@ -49,29 +51,32 @@ public class ConnectedThread extends Thread {
 
     public void run() {
         mmBuffer = new byte[4096];
-        int numBytes; // bytes returned from read()
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        int numBytes = 0; // bytes returned from read()
 
         // 持续监听
         while (true) {
             try {
-                // 从InputStream中读取字节流，存至mmBuffer中
-                numBytes = mmInStream.read(mmBuffer);
-                if (!(numBytes == 0 || numBytes == -1)){
-                    // 将读取的字节流反序列化为json，再由json生成对象
-                    String json = "";
-                    try {
-                        json = new String(mmBuffer, "UTF-8").trim();
-                    } catch (UnsupportedEncodingException e) {
-                        Log.e("Bluetooth", "Deserialize failed", e);
-                    }
-                    JsonReader reader = new JsonReader(new StringReader(json));
-                    reader.setLenient(true);
-                    MessageSchema msg = typeCasting(reader, json);
+                // 从InputStream中读取字节流，存至mmBuffer中；未读取完时，写入
+                while ((numBytes = mmInStream.read(mmBuffer)) > -1) {
+                    baos.write(mmBuffer, 0, numBytes);
+                    baos.flush();
 
-                    // 将收到的消息对象发回主线程
-                    Message readMsg = mmHandler.obtainMessage(Bluetooth.MESSAGE_READ, msg);
-                    mmHandler.sendMessage(readMsg);
+                    if (mmInStream.available() == 0)
+                        break;
                 }
+
+                // 将读取的字节流反序列化为json，再由json生成对象
+                String json = "";
+                json = baos.toString("UTF-8").trim();
+                baos.reset();
+                JsonReader reader = new JsonReader(new StringReader(json));
+                reader.setLenient(true);
+                MessageSchema msg = typeCasting(reader, json);
+
+                // 将收到的消息对象发回主线程
+                Message readMsg = mmHandler.obtainMessage(Bluetooth.MESSAGE_READ, msg);
+                mmHandler.sendMessage(readMsg);
 
             } catch (IOException e) {
                 Log.e("Bluetooth", "Input stream was disconnected", e);

@@ -96,6 +96,7 @@ public class MainActivity extends AppCompatActivity {
                     MessageSchema newMsg = new MsgShakeHands(Calendar.getInstance().getTimeInMillis(),
                             player.getDeviceID(), player.getNickName(), null, null, 0, null);
                     connector.getConnectedThreadOfClient().write(newMsg);
+                    Log.d("Message", "Client sent shake hand message to server.");
                     break;
 
                 case Bluetooth.GOT_A_CLIENT:    // 服务器连接上客户端
@@ -408,10 +409,10 @@ public class MainActivity extends AppCompatActivity {
                         // 发送消息给所有其他玩家
                         MessageSchema msg = new MsgGameStart(Calendar.getInstance().getTimeInMillis(),
                                 player.getDeviceID(), player.getNickName(), gameID, game.getPlayers());
-                        for (Player player : gameRoom.getPlayers()) {
-                            if (!player.getNickName().equals(player.getNickName())) {
-                                connector.getConnectedThreadsOfServer().get(player.getNickName()).write(msg);
-                                Log.d("Message", "Server sent start game message to " + player.getNickName() + ".");
+                        for (Player playerTmp : gameRoom.getPlayers()) {
+                            if (!playerTmp.getNickName().equals(player.getNickName())) {
+                                connector.getConnectedThreadsOfServer().get(playerTmp.getNickName()).write(msg);
+                                Log.d("Message", "Server sent start game message to " + playerTmp.getNickName() + ".");
                             }
                         }
                         state=State.SERVER_PLAYING;
@@ -488,10 +489,10 @@ public class MainActivity extends AppCompatActivity {
              */
             Card card = Game.getGameInstance().getPlayerByNickName(player.getNickName()).getOwnCards().getCards().get(i);
             String suit = card.getSuit().getName().toLowerCase();
-            String rank = card.getRank().getName();
+            String rank = card.getRank().getName().toLowerCase();
 
             int resId=func.getDrawableId(this, suit, rank);
-            String name=getResources().getResourceName(resId);
+            String name = suit + "_" + rank;
             imageMap.put(i,name);
             imageButton.setImageResource(resId);
 

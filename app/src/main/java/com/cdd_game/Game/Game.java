@@ -80,10 +80,11 @@ public class Game {
      */
     private void dealCards() {
         initialCards.shuffle();
+        int size = initialCards.size();
         for (Player player : players) {
             // TODO:不限于玩家人数（使用策略模式，拼接不同的Rule）
             // i <= initialCards.size() % ruleStrategy.getPlayerNumRule().getPlayerNum()
-            for (int i = 0; i < initialCards.size() % 4; i++) {
+            for (int i = 0; i < size / 4; i++) {
                 player.getOwnCards().addCard(initialCards.removeLastCard());
             }
         }
