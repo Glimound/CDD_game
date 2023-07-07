@@ -12,5 +12,6 @@ public enum BehaviourType {
     SHAKE_HAND,
     READY,
     GAME_START,
-    GAME_END
+    GAME_END,
+    CHAT
 }

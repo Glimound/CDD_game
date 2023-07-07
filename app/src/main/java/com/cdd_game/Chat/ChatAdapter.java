@@ -42,27 +42,28 @@ public class ChatAdapter extends BaseAdapter {
         return position;
     }
 
-    @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        ImageView imageView;
+        TextView name;
         TextView textView;
-        if(player.getNickName().equals(myData.get(position).getNickName() )){
+        if(!player.getNickName().equals(myData.get(position).getNickName() )){
             convertView = LayoutInflater.from(mContext).
                     inflate(R.layout.message_left,parent,false);
-            imageView = convertView.findViewById(R.id.image_left);
+            name=convertView.findViewById(R.id.left_name);
             textView = convertView.findViewById(R.id.txt_left);
+            name.setText(myData.get(position).getNickName()+": ");
         }
         else {
             convertView = LayoutInflater.from(mContext).
                     inflate(R.layout.message_right,parent,false);
-            imageView = convertView.findViewById(R.id.image_right);
+            name = convertView.findViewById(R.id.right_name);
             textView = convertView.findViewById(R.id.txt_right);
+            name.setText(" :"+player.getNickName());
         }
-        imageView.setImageResource(R.drawable.back);
         textView.setText(myData.get(position).getText());
 
         return convertView;
     }
+
 
 }
 

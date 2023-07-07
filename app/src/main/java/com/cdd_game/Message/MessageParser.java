@@ -2,13 +2,10 @@ package com.cdd_game.Message;
 
 import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
 
-import com.cdd_game.Card.CardGroup;
 import com.cdd_game.Game.Game;
 import com.cdd_game.Game.GameRoom;
 import com.cdd_game.MainActivity;
-import com.cdd_game.Message.MessageSchema;
 import com.cdd_game.Player.Player;
 import com.cdd_game.R;
 import com.cdd_game.Rule.NormalRule;
@@ -285,6 +282,21 @@ public class MessageParser {
                     activity.gameSettlement();
                 }
                 break;
+
+            case CHAT:
+                MsgChat tmpMsg8 = (MsgChat) msg;
+                if (activity.state == State.CLIENT_PLAYING) {
+                    activity.receiveChat(tmpMsg8.chat, activity.findViewById(R.id.chatContent));
+                } else if (activity.state == State.SERVER_PLAYING) {
+                    for (Player tmpPlayer : Game.getGameInstance().getPlayers()) {
+                        if (!tmpPlayer.getNickName().equals(activity.player.getNickName()) &&
+                                !tmpPlayer.getNickName().equals(tmpMsg8.nickName)) {
+                            activity.connector.getConnectedThreadsOfServer().get(tmpPlayer.getNickName()).write(msg);
+                            Log.d("Message", "Server sent chat message to " + tmpPlayer.getNickName() + ".");
+                        }
+                    }
+                    activity.receiveChat(tmpMsg8.chat, activity.findViewById(R.id.chatContent));
+                }
         }
     }
 }

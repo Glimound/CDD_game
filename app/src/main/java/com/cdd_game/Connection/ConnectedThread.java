@@ -18,7 +18,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
 
 public class ConnectedThread extends Thread {
     private final BluetoothSocket mmSocket;
@@ -141,6 +140,8 @@ public class ConnectedThread extends Thread {
                 return new Gson().fromJson(reader, MsgGameStart.class);
             case "GAME_END":
                 return new Gson().fromJson(reader, MsgGameEnd.class);
+            case "CHAT":
+                return new Gson().fromJson(reader, MsgChat.class);
         }
         return null;
     }

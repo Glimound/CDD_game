@@ -554,7 +554,8 @@ public class MainActivity extends AppCompatActivity {
         Button sendButton=findViewById(R.id.send_button);
         LinearLayout dialogBox = findViewById(R.id.dialog_box);
         ListView listView=findViewById(R.id.chatContent);
-        String inputMessage=findViewById(R.id.input_message).toString();
+        EditText editText=findViewById(R.id.input_message);
+        String[] inputMessage = new String[1];
         listView.setAdapter(chatAdapter);
         // 设置点击监听器
         messageButton.setOnClickListener(new View.OnClickListener() {
@@ -576,9 +577,25 @@ public class MainActivity extends AppCompatActivity {
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!inputMessage.isEmpty()){
+                inputMessage[0]=editText.getText().toString();//获取输入信息
+                editText.setText("");
+                Log.d("Chat", inputMessage[0]);
+                if(!inputMessage[0].isEmpty()){
                     //TODO:将头像更换为对应头像
-                    ChatData myChat=new ChatData(inputMessage,player.getNickName());
+                    ChatData myChat=new ChatData(inputMessage[0],player.getNickName());
+                    MessageSchema msg = new MsgChat(Calendar.getInstance().getTimeInMillis(),
+                            player.getDeviceID(), player.getNickName(), myChat);
+                    if (state == State.CLIENT_PLAYING) {
+                        connector.getConnectedThreadOfClient().write(msg);
+                        Log.d("Message", "Client sent chat message to server.");
+                    } else if (state == State.SERVER_PLAYING) {
+                        for (Player tmpPlayer : Game.getGameInstance().getPlayers()) {
+                            if (!tmpPlayer.getNickName().equals(player.getNickName())) {
+                                connector.getConnectedThreadsOfServer().get(tmpPlayer.getNickName()).write(msg);
+                                Log.d("Message", "Server sent chat message to " + tmpPlayer.getNickName() + ".");
+                            }
+                        }
+                    }
                     receiveChat(myChat,listView);
                 }
             }
