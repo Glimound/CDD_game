@@ -17,7 +17,7 @@ public class Player {
     private String deviceID;
     private boolean isReady;
 
-    // TODO：胜局 称号？
+    // TODO：胜局 称号
 
     //Constructor
     public Player(String deviceID, String nickName){

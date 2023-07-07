@@ -51,8 +51,6 @@ public class MessageParser {
                         }
                     }
 
-                    // TODO: 玩家加入房间，更新UI，显示该玩家
-
                     int num=GameRoom.getGameRoomInstance().getPlayers().indexOf(playerAdd);
                     switch(num){
                         case 1:
@@ -98,7 +96,6 @@ public class MessageParser {
                             activity.imageB.setVisibility(View.VISIBLE);
                             break;
                     }
-                    // TODO: 更新UI，显示房间内已有的玩家
                 }
                 break;
 
@@ -108,7 +105,6 @@ public class MessageParser {
                     Log.d("Message", "Client receive player joined message. Joined player: " + tmpMsg2.joinedPlayerNickName);
                     Player playerAdd=new Player(tmpMsg2.joinedPlayerID, tmpMsg2.joinedPlayerNickName);
                     GameRoom.getGameRoomInstance().addPlayer(playerAdd);
-                    // TODO: 更新UI，显示加入的玩家
                     int num=GameRoom.getGameRoomInstance().getPlayers().indexOf(playerAdd);
                     int num1=GameRoom.getGameRoomInstance().getPlayers().indexOf(activity.player);
                     int offset=num-num1;
@@ -140,7 +136,6 @@ public class MessageParser {
                 if (activity.state == State.SERVER_WAITING) {
                     Log.d("Message", "Server receive player ready message. Ready player: " + tmpMsg3.nickName);
                     GameRoom.getGameRoomInstance().getPlayerByNickName(tmpMsg3.nickName).setReady(true);
-                    // TODO: 更新UI，显示该玩家的已准备状态
                     Player tempPlayer=GameRoom.getGameRoomInstance().getPlayerByNickName(tmpMsg3.nickName);
                     int num=GameRoom.getGameRoomInstance().getPlayers().indexOf(tempPlayer);
                     int num1=GameRoom.getGameRoomInstance().getPlayers().indexOf(activity.player);
@@ -176,7 +171,6 @@ public class MessageParser {
                 } else if (activity.state == State.CLIENT_WAITING || activity.state == State.CLIENT_READY) {
                     Log.d("Message", "Client receive player ready message. Ready player: " + tmpMsg3.nickName);
                     GameRoom.getGameRoomInstance().getPlayerByNickName(tmpMsg3.nickName).setReady(true);
-                    // TODO: 更新UI，显示该玩家的已准备状态
                     Player tempPlayer=GameRoom.getGameRoomInstance().getPlayerByNickName(tmpMsg3.nickName);
                     int num=GameRoom.getGameRoomInstance().getPlayers().indexOf(tempPlayer);
                     int num1=GameRoom.getGameRoomInstance().getPlayers().indexOf(activity.player);
@@ -243,7 +237,7 @@ public class MessageParser {
 
                 // 判断该玩家是否胜利
                 if (game.getPlayerByNickName(tmpMsg5.nickName).getOwnCards().isEmpty()) {
-                    // 本机游戏结束，TODO: 切换界面至结算界面，在结算界面中computeScore, deleteGame
+                    // 本机游戏结束，切换界面至结算界面，在结算界面中computeScore, deleteGame
                     GameRoom.getGameRoomInstance().setWinner(game.getPlayerByNickName(tmpMsg5.nickName));
                     activity.gameSettlement();
                 } else {
@@ -267,7 +261,6 @@ public class MessageParser {
                         }
                     }
                 }
-                // TODO: 下一回合，更新UI（如果轮到自己出牌，则显示出牌和跳过按钮）
                 Game.getGameInstance().gameTurnPlusOne();
                 String nickNameOfPlayerToPlayCards = Game.getGameInstance().getPlayerToPlayCard().getNickName();
                 activity.updateNextPlayerUI(nickNameOfPlayerToPlayCards);
@@ -277,7 +270,7 @@ public class MessageParser {
                 MsgGameEnd tmpMsg7 = (MsgGameEnd) msg;
                 if (activity.state == State.CLIENT_PLAYING) {
                     Log.d("Message", "Client receive game end message. Winner: " + tmpMsg7.winnerNickName);
-                    // 本机游戏结束，TODO: 切换界面至结算界面，在结算界面中computeScore, deleteGame
+                    // 本机游戏结束，切换界面至结算界面，在结算界面中computeScore, deleteGame
                     GameRoom.getGameRoomInstance().setWinner(Game.getGameInstance().getPlayerByNickName(tmpMsg7.winnerNickName));
                     activity.gameSettlement();
                 }

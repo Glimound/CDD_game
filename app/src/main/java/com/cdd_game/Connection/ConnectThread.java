@@ -64,7 +64,7 @@ public class ConnectThread extends Thread {
         mmBluetooth.setConnectedThreadOfClient(mmConnectedThread);
         mmConnectedThread.start();
         mmHandler.sendEmptyMessage(Bluetooth.CONNECTED_TO_SERVER);
-        // TODO: 发送初始化信息：player name等等 写在main activity中
+        // 发送初始化信息：player name等等 写在main activity中
     }
 
 }

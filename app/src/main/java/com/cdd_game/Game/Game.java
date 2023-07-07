@@ -161,7 +161,6 @@ public class Game {
     }
 
     /**
-     * TODO: 涉及蓝牙连接
      * 结束游戏，向玩家发送信息，并更改对应的state；应当由玩家的State实例调用（可通过Controller）。
      * 恢复GameRoom和Player等实例中部分具有持久性的变量恢复至Game实例初始化之前的状态
      */

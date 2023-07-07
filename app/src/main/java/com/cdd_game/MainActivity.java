@@ -784,7 +784,7 @@ public class MainActivity extends AppCompatActivity {
 
                     // 判断自己是否胜利
                     if (game.getPlayerByNickName(player.getNickName()).getOwnCards().isEmpty()) {
-                        // 本机游戏结束，TODO: 切换界面至结算界面，在结算界面中computeScore, deleteGame
+                        // 本机游戏结束，切换界面至结算界面，在结算界面中computeScore, deleteGame
                         GameRoom.getGameRoomInstance().setWinner(player);
                         gameSettlement();
                     } else {
@@ -819,8 +819,8 @@ public class MainActivity extends AppCompatActivity {
                         imageMap.putAll(tempMap);
                     }
                 } else {
+                    // 更新UI，显示牌型不符合规则
                     showToast("牌型不符合规则");
-                    // TODO: 更新UI，显示牌型不符合规则
                 }
                 LinearLayout1.setGravity(View.TEXT_ALIGNMENT_CENTER);
             }
